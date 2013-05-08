@@ -46,7 +46,7 @@ public:
 	void swap(standard_handler &other) throw ();
 	
 	standard_handler(boost::shared_ptr<request_handler> const &handler, http_method_mask const &m);
-	void handle(boost::shared_ptr<context_type> ctx, logger &log);
+	void handle(boost::shared_ptr<context_type> ctx, logger &log) const;
 
 	class bool_convertible;
 	operator bool_convertible const* () const;

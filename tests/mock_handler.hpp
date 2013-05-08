@@ -15,12 +15,14 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-#ifndef FASTCGI_DAEMON_TESTS_MOCK_REQUEST_HPP_INCLUDED
-#define FASTCGI_DAEMON_TESTS_MOCK_REQUEST_HPP_INCLUDED
+#ifndef FASTCGI_DAEMON_TESTS_MOCK_HANDLER_HPP_INCLUDED
+#define FASTCGI_DAEMON_TESTS_MOCK_HANDLER_HPP_INCLUDED
 
 #include <string>
+#include <boost/shared_ptr.hpp>
 
 #include "fastcgi-daemon/config.hpp"
+#include "fastcgi-daemon/logger.hpp"
 
 namespace fcgid { namespace tests {
 
@@ -29,6 +31,7 @@ class mock_request {
 public:
 	mock_request(std::string const &pi);
 	std::string const& path_info() const;
+	typedef std::string string_type;
 
 private:
 	mock_request(mock_request const &);
@@ -38,7 +41,52 @@ private:
 	std::string path_info_;
 };
 
+class mock_response {
+
+public:
+	mock_response();
+	std::string const& content() const;
+	void content(std::string const &cont);
+	
+private:
+	mock_response(mock_response const &);
+	mock_response& operator = (mock_response const &);
+
+private:
+	std::string content_;
+};
+
+class mock_context {
+
+public:
+	mock_context(std::string const &pi);
+	mock_response& response();
+	mock_request const& request() const;
+
+	typedef mock_request request_type;
+	typedef mock_response response_type;
+
+private:
+	mock_request request_;
+	mock_response response_;
+};
+
+class mock_handler {
+
+public:
+	mock_handler();
+	mock_handler(std::string const &name);
+	void handle(boost::shared_ptr<mock_context> const &ctx, logger &log) const;
+	
+	typedef mock_context context_type;
+	
+	class bool_convertible;
+	operator bool_convertible const* () const;
+
+private:
+	std::string name_;
+};
+
 }} // namespaces
 
-#endif // FASTCGI_DAEMON_TESTS_MOCK_REQUEST_HPP_INCLUDED
-
+#endif // FASTCGI_DAEMON_TESTS_MOCK_HANDLER_HPP_INCLUDED

@@ -46,16 +46,12 @@ public:
 	typedef typename handler_type::context_type context_type;
 	typedef default_invoker_descriptor<Handler> descriptor_type;
 	
-	void attach(boost::shared_ptr<logger> const &log);
-	void handle(handler_type const &handler, boost::shared_ptr<context_type> const &ctx);
+	void handle(handler_type const &handler, boost::shared_ptr<context_type> const &ctx, logger &log);
 	descriptor_type descriptor(queue_name_type queue, Handler const &handler);
 
 private:
 	default_invoker(default_invoker const &);
 	default_invoker& operator = (default_invoker const &);
-
-private:
-	boost::shared_ptr<logger> logger_;
 };
 
 template <typename Handler>
@@ -65,9 +61,10 @@ public:
 	typedef Handler handler_type;
 	typedef typename handler_type::context_type context_type;
 
+	default_invoker_descriptor();
 	default_invoker_descriptor(handler_type const &handler, default_invoker<Handler> *invoker);
-	void invoke(boost::shared_ptr<context_type> const &ctx) throw ();
-
+	void handle(boost::shared_ptr<context_type> const &ctx, logger &log) const;
+	
 private:
 	handler_type handler_;
 	default_invoker<Handler> *invoker_;
@@ -83,24 +80,15 @@ default_invoker<Handler>::~default_invoker() {
 }
 
 template <typename Handler> inline void
-default_invoker<Handler>::attach(boost::shared_ptr<logger> const &log) {
-	assert(log);
-	logger_ = log;
-}
-
-template <typename Handler> inline void
-default_invoker<Handler>::handle(typename default_invoker<Handler>::handler_type const &handler, boost::shared_ptr<typename default_invoker<Handler>::context_type> const &ctx) {
+default_invoker<Handler>::handle(typename default_invoker<Handler>::handler_type const &handler, boost::shared_ptr<typename default_invoker<Handler>::context_type> const &ctx, logger &log) {
 	try {
-		handler.handle(ctx, *logger_);
+		handler.handle(ctx, log);
 	}
 	catch (http_error const &e) {
-		// logger_.info()
 	}
 	catch (runtime_error const &e) {
-		// logger_.error()
 	}
 	catch (std::exception const &e) {
-		// logger_.error()
 	}
 }
 
@@ -111,14 +99,23 @@ default_invoker<Handler>::descriptor(queue_name_type name, typename default_invo
 }
 
 template <typename Handler> inline
+default_invoker_descriptor<Handler>::default_invoker_descriptor() :
+	handler_(), invoker_(0)
+{
+}
+
+template <typename Handler> inline
 default_invoker_descriptor<Handler>::default_invoker_descriptor(typename default_invoker_descriptor<Handler>::handler_type const &handler, default_invoker<Handler> *invoker) :
 	handler_(handler), invoker_(invoker)
 {
 }
 
 template <typename Handler> inline void
-default_invoker_descriptor<Handler>::invoke(boost::shared_ptr<typename default_invoker_descriptor<Handler>::context_type> const &ctx) throw () {
-	invoker_->handle(handler_, ctx);
+default_invoker_descriptor<Handler>::handle(boost::shared_ptr<typename default_invoker_descriptor<Handler>::context_type> const &ctx, logger &log) const {
+	if (!invoker_ || !handler_) {
+		throw http_error(http_status::not_found);
+	}
+	invoker_->handle(handler_, ctx, log);
 }
 
 }} // namespaces

@@ -8,9 +8,10 @@ nobase_pkginclude_HEADERS = config.hpp cookie.hpp distinct.hpp endpoint.hpp \
 	details/fileset_impl.hpp details/functors.hpp \
 	details/generic_request.hpp details/generic_response.hpp \
 	details/iter_file.hpp details/iter_streambuf.hpp details/iterator.hpp \
-	details/line_end_filter.hpp details/paramset_impl.hpp \
-	details/post_buffer.hpp details/range.hpp details/request_parser.hpp \
-	details/resource.hpp details/runtime_error.hpp details/server_impl.hpp \
+	details/line_end_filter.hpp details/null_logger.hpp \
+	details/paramset_impl.hpp details/post_buffer.hpp details/range.hpp \
+	details/request_parser.hpp details/resource.hpp \
+	details/runtime_error.hpp details/server_impl.hpp \
 	details/standard_handler.hpp details/standard_request.hpp \
 	details/standard_response.hpp details/statistics_impl.hpp \
 	details/strings.hpp details/threaded_acceptor.hpp \

@@ -31,6 +31,7 @@
 #include "fastcgi-daemon/logger.hpp"
 #include "fastcgi-daemon/typedefs.hpp"
 #include "fastcgi-daemon/details/fatal_error.hpp"
+#include "fastcgi-daemon/details/null_logger.hpp"
 
 namespace fcgid { namespace details {
 
@@ -99,6 +100,9 @@ template <typename UrlMatcher> inline void
 threaded_acceptor<UrlMatcher>::start(thread_count_type nthreads) {
 	
 	std::size_t nth = nthreads.get();
+	if (!log_) {
+		log_.reset(new null_logger());
+	}
 	try {
 		for (typename descriptor_list_type::iterator i = descriptors_.begin(), end = descriptors_.end(); i != end; ++i) {
 			boost::function<void()> f = boost::bind(&type::run_accept_loop, this, boost::cref(*i));
