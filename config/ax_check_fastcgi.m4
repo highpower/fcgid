@@ -3,8 +3,11 @@ AC_DEFUN([AX_CHECK_FASTCGI],
 	ax_have_fastcgi="yes"
 	AC_CHECK_HEADER([fcgiapp.h], [], [ax_have_fastcgi="no"])
 	
+	ax_check_fastcgi_stored_libs="$LIBS"
 	ax_check_fastcgi_stored_ldflags="$LDFLAGS"
-	LDFLAGS="$ax_check_fastcgi_stored_ldflags -lfcgi"
+	
+	LDFLAGS="$ax_check_fastcgi_stored_ldflags"
+	LIBS="$ax_check_fastcgi_stored_libs -lfcgi"
 
 	AC_MSG_CHECKING([linkage with libfcgi])
 	AC_LINK_IFELSE(
@@ -12,6 +15,7 @@ AC_DEFUN([AX_CHECK_FASTCGI],
 		[AC_MSG_RESULT([yes])], [AC_MSG_RESULT([no]); ax_have_fastcgi="no"])
 	
 	LDFLAGS="$ax_check_fastcgi_stored_ldflags"
+	LIBS="$ax_check_fastcgi_stored_libs"
 
 	if test "f$ax_have_fastcgi" = "fyes"; then
 		AC_SUBST([FCGI_LIBS], [-lfcgi])

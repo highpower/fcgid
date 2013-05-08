@@ -1,9 +1,12 @@
 AC_DEFUN([AX_BOOST_THREAD],
 [
 	AC_REQUIRE([AX_BOOST_PREFIX])
+	ax_boost_thread_stored_libs="$LIBS"
 	ax_boost_thread_stored_ldflags="$LDFLAGS"
+	
 	AX_BOOST_LIB([ax_boost_thread_lib], [boost_thread])
-	LDFLAGS="$ax_boost_thread_stored_ldflags $BOOST_LDFLAGS -l$ax_boost_thread_lib"
+	LDFLAGS="$ax_boost_thread_stored_ldflags $BOOST_LDFLAGS"
+	LIBS="$ax_boost_thread_stored_libs -l$ax_boost_thread_lib"
 	
 	ax_have_boost_thread="yes"
 	AX_BOOST_HEADER([thread.hpp], [], [ax_have_boost_thread="no"])
@@ -20,6 +23,8 @@ AC_DEFUN([AX_BOOST_THREAD],
 	AC_LANG_RESTORE()
 	
 	LDFLAGS="$ax_boost_thread_stored_ldflags"
+	LIBS="$ax_boost_thread_stored_libs"
+
 	if test "f$ax_have_boost_thread" = "fyes"; then
 		ifelse([$1], , :, [$1])
 		AC_SUBST([BOOST_THREAD_LDFLAGS], ["-l$ax_boost_thread_lib"])

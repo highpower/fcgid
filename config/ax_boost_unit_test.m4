@@ -1,11 +1,13 @@
 AC_DEFUN([AX_BOOST_UNIT_TEST],
 [
+	ax_boost_unit_test_stored_libs="$LIBS"
 	ax_boost_unit_test_stored_ldflags="$LDFLAGS"
 	
 	AC_REQUIRE([AX_BOOST_PREFIX])
 	AX_BOOST_LIB([ax_boost_unit_test_lib], [boost_unit_test_framework])
 	
-	LDFLAGS="$ax_boost_unit_test_stored_ldflags $BOOST_LDFLAGS -l$ax_boost_unit_test_lib"
+	LDFLAGS="$ax_boost_unit_test_stored_ldflags $BOOST_LDFLAGS"
+	LIBS="$ax_boost_unit_test_stored_libs -l$ax_boost_unit_test_lib"
 	
 	ax_have_boost_unit_test="yes"
 	AX_BOOST_HEADER([test/unit_test.hpp], [], [ax_have_boost_unit_test="no"])
@@ -22,6 +24,7 @@ AC_DEFUN([AX_BOOST_UNIT_TEST],
 	AC_LANG_RESTORE()
 	
 	LDFLAGS="$ax_boost_unit_test_stored_ldflags"
+	LIBS="$ax_boost_unit_test_stored_libs"
 	
 	if test "f$ax_have_boost_unit_test" = "fyes"; then
 		ifelse([$1], , :, [$1])
