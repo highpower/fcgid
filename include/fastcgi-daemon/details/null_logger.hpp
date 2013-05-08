@@ -15,30 +15,29 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-#ifndef FASTCGI_DAEMON_TESTS_MOCK_REQUEST_HPP_INCLUDED
-#define FASTCGI_DAEMON_TESTS_MOCK_REQUEST_HPP_INCLUDED
-
-#include <string>
+#ifndef FASTCGI_DAEMON_NULL_LOGGER_HPP_INCLUDED
+#define FASTCGI_DAEMON_NULL_LOGGER_HPP_INCLUDED
 
 #include "fastcgi-daemon/config.hpp"
+#include "fastcgi-daemon/logger.hpp"
 
-namespace fcgid { namespace tests {
+namespace fcgid {
 
-class mock_request {
+class null_logger : public logger {
 
 public:
-	mock_request(std::string const &pi);
-	std::string const& path_info() const;
+	null_logger();
+	virtual ~null_logger();
+
+	virtual void info(char const *format, ...);
+	virtual void debug(char const *format, ...);
+	virtual void error(char const *format, ...);
 
 private:
-	mock_request(mock_request const &);
-	mock_request& operator = (mock_request const &);
-
-private:
-	std::string path_info_;
+	null_logger(null_logger const &);
+	null_logger& operator = (null_logger const &);
 };
 
-}} // namespaces
+} // namespace
 
-#endif // FASTCGI_DAEMON_TESTS_MOCK_REQUEST_HPP_INCLUDED
-
+#endif // FASTCGI_DAEMON_LOGGER_HPP_INCLUDED
