@@ -15,13 +15,13 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-#ifndef FASTCGI_DAEMON_NULL_LOGGER_HPP_INCLUDED
-#define FASTCGI_DAEMON_NULL_LOGGER_HPP_INCLUDED
+#ifndef FASTCGI_DAEMON_DETAILS_NULL_LOGGER_HPP_INCLUDED
+#define FASTCGI_DAEMON_DETAILS_NULL_LOGGER_HPP_INCLUDED
 
 #include "fastcgi-daemon/config.hpp"
 #include "fastcgi-daemon/logger.hpp"
 
-namespace fcgid {
+namespace fcgid { namespace details {
 
 class null_logger : public logger {
 
@@ -38,6 +38,6 @@ private:
 	null_logger& operator = (null_logger const &);
 };
 
-} // namespace
+}} // namespaces
 
-#endif // FASTCGI_DAEMON_LOGGER_HPP_INCLUDED
+#endif // FASTCGI_DAEMON_DETAILS_NULL_LOGGER_HPP_INCLUDED
