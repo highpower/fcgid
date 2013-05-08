@@ -1,5 +1,5 @@
 #include "acsetup.hpp"
-#include "fastcgi-daemon/details/statistics_impl.cpp"
+#include "fastcgi-daemon/details/statistics_impl.hpp"
 
 namespace fcgid { namespace details {
 

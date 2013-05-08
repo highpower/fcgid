@@ -45,6 +45,8 @@ public:
 	void attach_logger(boost::shared_ptr<logger> const &log);
 	void attach_handler(url_type url, queue_name_type queue, boost::shared_ptr<request_handler> const &handler, http_method_mask const &mask);
 
+	statistics stat() const;
+
 private:
 	typedef details::server_impl impl_type;
 	boost::shared_ptr<impl_type> impl_;

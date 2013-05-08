@@ -30,6 +30,7 @@ class http_method_mask;
 class logger;
 class server;
 class endpoint;
+class statistics;
 
 class cookie;
 class request;

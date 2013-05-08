@@ -18,6 +18,8 @@
 #ifndef FASTCGI_DAEMON_DETAILS_STATISTICS_IMPL_HPP_INCLUDED
 #define FASTCGI_DAEMON_DETAILS_STATISTICS_IMPL_HPP_INCLUDED
 
+#include <cstddef>
+
 #include "fastcgi-daemon/config.hpp"
 
 namespace fcgid { namespace details {

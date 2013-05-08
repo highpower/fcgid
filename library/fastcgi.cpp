@@ -65,6 +65,16 @@ fastcgi::status(http_status const &st) {
 	(void) st;
 }
 
+std::size_t
+fastcgi::write(char const *buffer, std::size_t size) {
+	return 0;
+}
+
+std::size_t
+fastcgi::write_header(range<char const*> const &name, range<char const*> const &value) {
+	return 0;
+}
+
 void
 fastcgi::init_fastcgi_engine() {
 	FCGX_Init();

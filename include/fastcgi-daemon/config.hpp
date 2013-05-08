@@ -18,12 +18,40 @@
 #ifndef FASTCGI_DAEMON_CONFIG_HPP_INCLUDED
 #define FASTCGI_DAEMON_CONFIG_HPP_INCLUDED
 
-#include <memory>
+#if defined _WIN32 || defined __CYGWIN__
 
-#ifdef WIN32
+#ifdef FASTCGI_DAEMON_LIBRARY
+
+#ifdef __GNUC__
+#define FASTCGI_DAEMON_API __attribute__ ((dllexport))
+#else
+#define FASTCGI_DAEMON_API __declspec(dllexport)
+#endif
+
+#else // FASTCGI_DAEMON_LIBRARY
+
+#ifdef __GNUC__
+#define FASTCGI_DAEMON_API __attribute__ ((dllimport))
+#else
+#define FASTCGI_DAEMON_API __declspec(dllimport)
+#endif
+
+#endif // FASTCGI_DAEMON_LIBRARY
+#define FASTCGI_DAEMON_LOCAL
+
+#else // defined _WIN32 || defined __CYGWIN__
+
+#if __GNUC__ >= 4
+#define FASTCGI_DAEMON_API __attribute__ ((visibility ("default")))
+#define FASTCGI_DAEMON_LOCAL  __attribute__ ((visibility ("hidden")))
 #else
 #define FASTCGI_DAEMON_API
-#endif 
+#define FASTCGI_DAEMON_LOCAL
+#endif
+
+#endif // defined _WIN32 || defined __CYGWIN__
+
+#include <memory>
 
 namespace fcgid {
 

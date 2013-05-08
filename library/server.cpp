@@ -3,6 +3,7 @@
 
 #include <algorithm>
 
+#include "fastcgi-daemon/statistics.hpp"
 #include "fastcgi-daemon/details/server_impl.hpp"
 #include "fastcgi-daemon/details/standard_handler.hpp"
 
@@ -61,6 +62,11 @@ server::create_request_queue(queue_name_type, thread_count_type nthreads) {
 void
 server::attach_handler(url_type url, queue_name_type queue, boost::shared_ptr<request_handler> const &handler, http_method_mask const &mask) {
 	details::standard_handler sth(handler, mask);
+}
+
+statistics
+server::stat() const {
+	
 }
 
 } // namespaces
