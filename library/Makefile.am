@@ -5,9 +5,11 @@ libfastcgi_daemon_la_SOURCES = cookie.cpp endpoint.cpp endpoint_impl.cpp \
 	generic_response.cpp http_date.cpp http_method.cpp http_status.cpp \
 	logger.cpp paramset.cpp post_buffer.cpp request.cpp request_handler.cpp \
 	request_parser.cpp response.cpp runtime_error.cpp server.cpp \
-	server_impl.cpp standard_handler.cpp statistics.cpp urlencode.cpp \
-	urltree.cpp
+	server_impl.cpp standard_handler.cpp statistics.cpp statistics_impl.cpp \
+	urlencode.cpp urltree.cpp
 
 AM_CXXFLAGS = -pthread
-AM_CPPFLAGS = -I${top_srcdir}/include -I${top_srcdir}/config @BOOST_CPPFLAGS@
+AM_CPPFLAGS = -I${top_srcdir}/include -I${top_srcdir}/config \
+	-DFASTCGI_DAEMON_LIBRARY @BOOST_CPPFLAGS@
+
 AM_LDFLAGS = @BOOST_LDFLAGS@ @BOOST_THREAD_LDFLAGS@ @FCGI_LIBS@
