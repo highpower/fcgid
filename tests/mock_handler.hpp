@@ -22,7 +22,7 @@
 #include <boost/shared_ptr.hpp>
 
 #include "fastcgi-daemon/config.hpp"
-#include "fastcgi-daemon/logger.hpp"
+#include "fastcgi-daemon/forward.hpp"
 
 namespace fcgid { namespace tests {
 

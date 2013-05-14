@@ -6,8 +6,8 @@ fastcgi_daemon_tests_SOURCES = main.cpp mock_handler.cpp mock_io.cpp \
 	cookie_test.cpp distinct_test.cpp functors_test.cpp http_date_test.cpp \
 	http_method_test.cpp iter_streambuf_test.cpp iterator_test.cpp \
 	line_end_test.cpp parser_test.cpp range_test.cpp request_test.cpp \
-	response_test.cpp strings_test.cpp tokenizer_test.cpp urlencode_test.cpp \
-	urltree_test.cpp
+	response_test.cpp strings_test.cpp sync_queue_test.cpp \
+	tokenizer_test.cpp urlencode_test.cpp urltree_test.cpp
 
 TESTS = fastcgi-daemon-tests
 

@@ -55,6 +55,8 @@ public:
 	void listen(descriptor_type const &ep);
 	void attach_logger(boost::shared_ptr<logger> const &log);
 
+	matcher_type& matcher();
+
 private:
 	threaded_acceptor(threaded_acceptor const &);
 	threaded_acceptor& operator = (threaded_acceptor const &);
@@ -68,8 +70,8 @@ private:
 private:
 	bool stopped_;
 	matcher_type matcher_;
-	boost::shared_ptr<logger> log_;
 	descriptor_list_type descriptors_;
+	boost::shared_ptr<logger> logger_;
 	mutable boost::mutex stopped_mutex_;
 };
 
@@ -100,8 +102,8 @@ template <typename UrlMatcher> inline void
 threaded_acceptor<UrlMatcher>::start(thread_count_type nthreads) {
 	
 	std::size_t nth = nthreads.get();
-	if (!log_) {
-		log_.reset(new null_logger());
+	if (!logger_) {
+		attach_logger(boost::shared_ptr<logger>(new null_logger()));
 	}
 	try {
 		for (typename descriptor_list_type::iterator i = descriptors_.begin(), end = descriptors_.end(); i != end; ++i) {
@@ -113,7 +115,7 @@ threaded_acceptor<UrlMatcher>::start(thread_count_type nthreads) {
 	}
 	catch (std::exception const &e) {
 		stop();
-		log_->error("exception caught while starting server: %s", e.what());
+		logger_->error("exception caught while starting server: %s", e.what());
 		throw;
 	}
 }
@@ -130,7 +132,13 @@ threaded_acceptor<UrlMatcher>::listen(typename threaded_acceptor<UrlMatcher>::de
 
 template <typename UrlMatcher> inline void
 threaded_acceptor<UrlMatcher>::attach_logger(boost::shared_ptr<logger> const &log) {
-	log_ = log;
+	assert(log);
+	logger_ = log;
+}
+
+template <typename UrlMatcher> inline typename threaded_acceptor<UrlMatcher>::matcher_type&
+threaded_acceptor<UrlMatcher>::matcher() {
+	return matcher_;
 }
 
 template <typename UrlMatcher> inline bool
@@ -151,7 +159,7 @@ threaded_acceptor<UrlMatcher>::run_accept_loop(typename threaded_acceptor<UrlMat
 		try {
 			boost::shared_ptr<context_type> ctx(new context_type(desc));
 			ctx->accept();
-			matcher_.handle(ctx, *log_);
+			matcher_.handle(ctx, *logger_);
 			ctx->finish();
 		}
 		catch (fatal_error const &) {

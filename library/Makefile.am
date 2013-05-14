@@ -6,7 +6,7 @@ libfastcgi_daemon_la_SOURCES = cookie.cpp endpoint.cpp endpoint_impl.cpp \
 	logger.cpp null_logger.cpp paramset.cpp post_buffer.cpp request.cpp \
 	request_handler.cpp request_parser.cpp response.cpp runtime_error.cpp \
 	server.cpp server_impl.cpp standard_handler.cpp statistics.cpp \
-	statistics_impl.cpp urlencode.cpp urltree.cpp
+	statistics_impl.cpp sync_queue.cpp urlencode.cpp urltree.cpp
 
 AM_CXXFLAGS = -pthread
 AM_CPPFLAGS = -I${top_srcdir}/include -I${top_srcdir}/config \

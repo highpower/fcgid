@@ -14,6 +14,6 @@ nobase_pkginclude_HEADERS = config.hpp cookie.hpp distinct.hpp endpoint.hpp \
 	details/runtime_error.hpp details/server_impl.hpp \
 	details/standard_handler.hpp details/standard_request.hpp \
 	details/standard_response.hpp details/statistics_impl.hpp \
-	details/strings.hpp details/threaded_acceptor.hpp \
+	details/strings.hpp details/sync_queue.hpp details/threaded_acceptor.hpp \
 	details/threaded_invoker.hpp details/tokenizer.hpp \
 	details/urlencode_impl.hpp details/urltree.hpp

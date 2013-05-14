@@ -1,5 +1,6 @@
 #include "acsetup.hpp"
 #include "mock_handler.hpp"
+#include "fastcgi-daemon/logger.hpp"
 
 namespace fcgid { namespace tests {
 
@@ -54,6 +55,7 @@ mock_handler::mock_handler(std::string const &name) :
 
 void
 mock_handler::handle(boost::shared_ptr<mock_context> const &ctx, logger &log) const {
+	(void) log;
 	mock_response &resp = ctx->response();
 	resp.content(name_);
 }

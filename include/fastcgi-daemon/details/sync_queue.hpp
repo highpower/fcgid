@@ -21,11 +21,14 @@
 #include <utility>
 #include <functional>
 #include <boost/bind.hpp>
+#include <boost/function.hpp>
+
 #include <boost/thread.hpp>
+#include <boost/thread/mutex.hpp>
+#include <boost/thread/condition.hpp>
 
 #include "fastcgi-daemon/error.hpp"
 #include "fastcgi-daemon/config.hpp"
-#include "fastcgi-daemon/details/runtime_error.hpp"
 
 namespace fcgid { namespace details {
 
@@ -57,6 +60,7 @@ private:
 	std::queue<Item> items_;
 	boost::condition condition_;
 	boost::mutex mutable mutex_;
+	boost::function<bool()> ready_;
 };
 
 struct null_bounds_checker {
@@ -93,8 +97,9 @@ struct dynamic_bounded_sync_queue : public sync_queue_base<dynamic_bounds_checke
 
 template <typename BoundsChecker, typename Item> inline
 sync_queue_base<BoundsChecker, Item>::sync_queue_base() :
-	stopped_(false)
+	stopped_(false), ready_()
 {
+	ready_ = boost::bind(&sync_queue_base<BoundsChecker, Item>::ready, this);
 }
 
 template <typename BoundsChecker, typename Item> inline
@@ -113,7 +118,7 @@ sync_queue_base<BoundsChecker, Item>::pop() {
 	
 	boost::mutex::scoped_lock lock(mutex_);
 	std::pair<Item, bool> result(Item(), false);
-	condition_.wait(lock, boost::bind(sync_queue_base<BoundsChecker, Item>::ready, this));
+	condition_.wait(lock, ready_);
 	if (!stopped_) {
 		result = std::make_pair(items_.front(), true);
 		items_.pop();
@@ -136,38 +141,9 @@ sync_queue_base<BoundsChecker, Item>::ready() const {
 	return stopped_ || !items_.empty();
 }
 
-inline char const*
-bounds_reached::what() const throw () {
-	return "bound reached";
-}
-
-inline bool
-null_bounds_checker::reached(std::size_t size) const {
-	(void) size;
-	return false;
-}
-
 template <std::size_t N> inline bool
 static_bounds_checker<N>::reached(std::size_t size) const {
 	return N == size;
-}
-
-dynamic_bounds_checker::dynamic_bounds_checker() :
-	size_(0)
-{
-}
-
-inline void
-dynamic_bounds_checker::bounds(std::size_t size) {
-	size_ = size;
-}
-
-inline bool
-dynamic_bounds_checker::reached(std::size_t size) const {
-	if (0 != size_) {
-		return size_ == size;
-	}
-	throw runtime_error("thread queue was not initialized properly");
 }
 
 }} // namespaces

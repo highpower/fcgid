@@ -49,8 +49,10 @@ public:
 	urltree();
 	virtual ~urltree();
 	
-	void add(url_type url, queue_name_type queue, handler_type const &h);
-	void handle(boost::shared_ptr<context_type> const &ctx, logger &log) const;
+	void add(url_type url, descriptor_type const &desc);
+	void handle(boost::shared_ptr<context_type> const &ctx, logger &log);
+
+	invoker_type& invoker();
 
 private:
 	urltree(urltree const &);
@@ -81,8 +83,8 @@ public:
 	void descriptor(descriptor_type const &desc);
 	boost::shared_ptr<type> get(range<char const*> const &path);
 	
-	boost::shared_ptr<type> const& find(range<char const*> const &path) const;
-	void handle(boost::shared_ptr<context_type> const &ctx, logger &log) const;
+	void invoke(boost::shared_ptr<context_type> const &ctx, logger &log);
+	type* find(range<char const*> const &path);
 
 private:
 	typedef range<char const*> range_type;
@@ -108,7 +110,7 @@ urltree<Invoker>::~urltree() {
 }
 
 template <typename Invoker> inline void
-urltree<Invoker>::add(url_type url, queue_name_type name, typename urltree<Invoker>::handler_type const &h) {
+urltree<Invoker>::add(url_type url, typename urltree<Invoker>::descriptor_type const &desc) {
 	
 	typedef range<char const*> range_type;
 	typedef split_if_equal<char> predicate_type;
@@ -123,12 +125,11 @@ urltree<Invoker>::add(url_type url, queue_name_type name, typename urltree<Invok
 	for (tokenizer_type::const_iterator i = tok.begin(), end = tok.end(); i != end; ++i) {
 		node = node->get(*i);
 	}
-	descriptor_type desc = invoker_.descriptor(name, h);
 	node->descriptor(desc);
 }
 
 template <typename Invoker> inline void
-urltree<Invoker>::handle(boost::shared_ptr<typename urltree<Invoker>::context_type> const &ctx, logger &log) const {
+urltree<Invoker>::handle(boost::shared_ptr<typename urltree<Invoker>::context_type> const &ctx, logger &log) {
 	
 	typedef range<char const*> range_type;
 	typedef split_if_equal<char> predicate_type;
@@ -138,12 +139,17 @@ urltree<Invoker>::handle(boost::shared_ptr<typename urltree<Invoker>::context_ty
 	request_type const &req = ctx->request();
 	typename request_type::string_type const &pi = req.path_info();
 
-	node_type const *node = root_.get();
+	node_type *node = root_.get();
 	tokenizer_type tok(make_range(pi.c_str(), pi.c_str() + pi.size()), split_if_equal<char>('/'));
 	for (tokenizer_type::const_iterator i = tok.begin(), end = tok.end(); i != end; ++i) {
-		node = node->find(*i).get();
+		node = node->find(*i);
 	}
-	node->handle(ctx, log);
+	node->invoke(ctx, log);
+}
+
+template <typename Invoker> inline typename urltree<Invoker>::invoker_type&
+urltree<Invoker>::invoker() {
+	return invoker_;
 }
 
 template <typename Invoker> inline 
@@ -180,21 +186,21 @@ urltree_node<Invoker>::get(range<char const*> const &path) {
 	}
 }
 
-template <typename Invoker> inline boost::shared_ptr<typename urltree_node<Invoker>::type> const&
-urltree_node<Invoker>::find(range<char const*> const &path) const {
-	typename children_map_type::const_iterator i = children_.find(path);
-	if (children_.end() != i) {
-		return i->second;
-	}
-	else if (wildcard_node_) {
-		return wildcard_node_;
-	}
-	throw http_error(http_status::not_found);
+template <typename Invoker> inline void
+urltree_node<Invoker>::invoke(boost::shared_ptr<typename urltree_node<Invoker>::context_type> const &ctx, logger &log) {
+	descriptor_.invoke(ctx, log);
 }
 
-template <typename Invoker> inline void
-urltree_node<Invoker>::handle(boost::shared_ptr<typename urltree_node<Invoker>::context_type> const &ctx, logger &log) const {
-	descriptor_.handle(ctx, log);
+template <typename Invoker> inline typename urltree_node<Invoker>::type*
+urltree_node<Invoker>::find(range<char const*> const &path) {
+	typename children_map_type::const_iterator i = children_.find(path);
+	if (children_.end() != i) {
+		return i->second.get();
+	}
+	else if (wildcard_node_) {
+		return wildcard_node_.get();
+	}
+	throw http_error(http_status::not_found);
 }
 
 }} // namespaces
