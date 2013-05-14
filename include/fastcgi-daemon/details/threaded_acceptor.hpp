@@ -64,6 +64,7 @@ private:
 	bool stopped() const;
 	void stopped(bool value);
 	void run_accept_loop(descriptor_type const &desc);
+	void log_handling(boost::shared_ptr<context_type> const &ctx);
 
 	typedef std::list<descriptor_type> descriptor_list_type;
 
@@ -159,15 +160,26 @@ threaded_acceptor<UrlMatcher>::run_accept_loop(typename threaded_acceptor<UrlMat
 		try {
 			boost::shared_ptr<context_type> ctx(new context_type(desc));
 			ctx->accept();
+			log_handling(ctx);
 			matcher_.handle(ctx, *logger_);
 			ctx->finish();
 		}
 		catch (fatal_error const &) {
+			logger_->error("fatal error occured in main loop");
 			stop();
 		}
 		catch (std::exception const &e) {
+			logger_->error("error occured in main loop: %s", e.what());
 		}
 	}
+}
+
+template <typename UrlMatcher> inline void
+threaded_acceptor<UrlMatcher>::log_handling(boost::shared_ptr<context_type> const &ctx) {
+	typedef typename context_type::request_type request_type;
+	request_type const &req = ctx->request();
+	typename request_type::string_type const &pi = req.path_info();
+	logger_->info("handling %s", pi.c_str());
 }
 
 }} // namespaces
