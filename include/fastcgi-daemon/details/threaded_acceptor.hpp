@@ -53,7 +53,7 @@ public:
 	void start(thread_count_type nthreads);
 
 	void listen(descriptor_type const &ep);
-	void attach_logger(boost::shared_ptr<logger> const &log);
+	void add(boost::shared_ptr<logger> const &log);
 
 	matcher_type& matcher();
 
@@ -105,7 +105,7 @@ threaded_acceptor<UrlMatcher>::start(thread_count_type nthreads) {
 	
 	std::size_t nth = nthreads.get();
 	if (!logger_) {
-		attach_logger(boost::shared_ptr<logger>(new null_logger()));
+		add(boost::shared_ptr<logger>(new null_logger()));
 	}
 	try {
 		for (typename descriptor_list_type::iterator i = descriptors_.begin(), end = descriptors_.end(); i != end; ++i) {
@@ -133,9 +133,9 @@ threaded_acceptor<UrlMatcher>::listen(typename threaded_acceptor<UrlMatcher>::de
 }
 
 template <typename UrlMatcher> inline void
-threaded_acceptor<UrlMatcher>::attach_logger(boost::shared_ptr<logger> const &log) {
+threaded_acceptor<UrlMatcher>::add(boost::shared_ptr<logger> const &log) {
 	assert(log);
-	matcher_.attach_logger(log);
+	matcher_.add(log);
 	logger_ = log;
 }
 

@@ -51,8 +51,8 @@ server::listen(endpoint const &ep) {
 }
 
 void
-server::attach_logger(boost::shared_ptr<logger> const &log) {
-	impl_->attach_logger(log);
+server::add(boost::shared_ptr<logger> const &log) {
+	impl_->add(log);
 }
 
 void
@@ -62,7 +62,7 @@ server::create_queue(queue_name_type name, thread_count_type nthreads) {
 }
 
 void
-server::attach_handler(url_type url, queue_name_type queue, boost::shared_ptr<request_handler> const &handler, http_method_mask const &mask) {
+server::add(url_type url, queue_name_type queue, boost::shared_ptr<request_handler> const &handler, http_method_mask const &mask) {
 	using namespace details;
 	impl_type::invoker_type &invoker = impl_->invoker();
 	impl_type::matcher_type &matcher = impl_->matcher();

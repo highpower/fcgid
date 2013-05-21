@@ -25,7 +25,7 @@ BOOST_AUTO_TEST_CASE(test_existent) {
 	using namespace details;
 
 	urltree<default_invoker<mock_handler>::type> tree;
-	tree.attach_logger(boost::shared_ptr<logger>(new null_logger()));
+	tree.add(boost::shared_ptr<logger>(new null_logger()));
 	tree.add(url_type("/abc/def/ghi"), tree.invoker().descriptor(mock_handler("the name")));
 	
 	boost::shared_ptr<mock_context> ctx(new mock_context("/abc/def/ghi"));
@@ -39,7 +39,7 @@ BOOST_AUTO_TEST_CASE(test_wildcard) {
 	using namespace details;
 
 	urltree<default_invoker<mock_handler>::type> tree;
-	tree.attach_logger(boost::shared_ptr<logger>(new null_logger()));
+	tree.add(boost::shared_ptr<logger>(new null_logger()));
 	tree.add(url_type("/abc/*/ghi"), tree.invoker().descriptor(mock_handler("the name")));
 	tree.add(url_type("/abc/def/*"), tree.invoker().descriptor(mock_handler("the other name")));
 	
@@ -54,7 +54,7 @@ BOOST_AUTO_TEST_CASE(test_existent_wildcard) {
 	using namespace details;
 
 	urltree<default_invoker<mock_handler>::type> tree;
-	tree.attach_logger(boost::shared_ptr<logger>(new null_logger()));
+	tree.add(boost::shared_ptr<logger>(new null_logger()));
 	tree.add(url_type("/abc/def/*"), tree.invoker().descriptor(mock_handler("the name")));
 	tree.add(url_type("/abc/def/ghi"), tree.invoker().descriptor(mock_handler("the other name")));
 	
@@ -68,7 +68,7 @@ BOOST_AUTO_TEST_CASE(test_nonexistent) {
 	using namespace details;
 	
 	urltree<default_invoker<mock_handler>::type> tree;
-	tree.attach_logger(boost::shared_ptr<logger>(new null_logger()));
+	tree.add(boost::shared_ptr<logger>(new null_logger()));
 	tree.add(url_type("/abc/def/*"), tree.invoker().descriptor(mock_handler("the name")));
 
 	boost::shared_ptr<mock_context> ctx;

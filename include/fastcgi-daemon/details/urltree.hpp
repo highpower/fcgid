@@ -51,7 +51,7 @@ public:
 	
 	invoker_type& invoker();
 	void add(url_type url, descriptor_type const &desc);
-	void attach_logger(boost::shared_ptr<logger> const &log);
+	void add(boost::shared_ptr<logger> const &log);
 	void handle(boost::shared_ptr<context_type> const &ctx);
 
 private:
@@ -134,8 +134,8 @@ urltree<Invoker>::add(url_type url, typename urltree<Invoker>::descriptor_type c
 }
 
 template <typename Invoker> inline void
-urltree<Invoker>::attach_logger(boost::shared_ptr<logger> const &log) {
-	invoker_.attach_logger(log);
+urltree<Invoker>::add(boost::shared_ptr<logger> const &log) {
+	invoker_.add(log);
 }
 
 template <typename Invoker> inline void

@@ -46,9 +46,10 @@ public:
 	typedef default_invoker_descriptor<Handler> descriptor_type;
 	
 	logger& log();
+	void add(boost::shared_ptr<logger> const &log);
+	
 	descriptor_type descriptor(Handler const &handler);
 	void handle(handler_type const &handler, boost::shared_ptr<context_type> const &ctx) throw ();
-	void attach_logger(boost::shared_ptr<logger> const &log);
 	void error(char const *when, boost::shared_ptr<context_type> const &ctx, std::exception const &e);
 
 private:
@@ -91,6 +92,11 @@ default_invoker<Handler>::log() {
 	return *log_;
 }
 
+template <typename Handler> inline void
+default_invoker<Handler>::add(boost::shared_ptr<logger> const &log) {
+	log_ = log;
+}
+
 template <typename Handler> inline typename default_invoker<Handler>::descriptor_type
 default_invoker<Handler>::descriptor(typename default_invoker<Handler>::handler_type const &handler) {
 	return descriptor_type(handler, this);
@@ -107,11 +113,6 @@ default_invoker<Handler>::handle(typename default_invoker<Handler>::handler_type
 	catch (std::exception const &e) {
 		error("http error occured", ctx, e);
 	}
-}
-
-template <typename Handler> inline void
-default_invoker<Handler>::attach_logger(boost::shared_ptr<logger> const &log) {
-	log_ = log;
 }
 
 template <typename Handler> inline void
