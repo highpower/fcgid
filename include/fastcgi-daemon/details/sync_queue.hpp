@@ -45,6 +45,8 @@ public:
 	virtual ~sync_queue_base();
 	
 	void stop();
+	bool stopped() const;
+	
 	std::pair<Item, bool> pop();
 	void push(Item const &item);
 	
@@ -111,6 +113,12 @@ sync_queue_base<BoundsChecker, Item>::stop() {
 	boost::mutex::scoped_lock lock(mutex_);
 	stopped_ = true;
 	condition_.notify_all();
+}
+
+template <typename BoundsChecker, typename Item> inline bool
+sync_queue_base<BoundsChecker, Item>::stopped() const {
+	boost::mutex::scoped_lock lock(mutex_);
+	return stopped_;
 }
 
 template <typename BoundsChecker, typename Item> inline std::pair<Item, bool>

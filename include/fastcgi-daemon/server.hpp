@@ -40,7 +40,7 @@ public:
 	void start(thread_count_type nthreads);
 
 	void listen(endpoint const &ep);
-	void create_request_queue(queue_name_type name, thread_count_type nthreads);
+	void create_queue(queue_name_type name, thread_count_type nthreads);
 	
 	void attach_logger(boost::shared_ptr<logger> const &log);
 	void attach_handler(url_type url, queue_name_type queue, boost::shared_ptr<request_handler> const &handler, http_method_mask const &mask);

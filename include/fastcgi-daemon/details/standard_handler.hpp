@@ -34,13 +34,13 @@ namespace fcgid { namespace details {
 class standard_handler {
 
 public:
+	standard_handler();
+	virtual ~standard_handler();
+	
 	typedef standard_request<fastcgi> request_type;
 	typedef standard_response<fastcgi> response_type;
 	typedef context<fastcgi, request_type, response_type> context_type;
 
-	standard_handler();
-	virtual ~standard_handler();
-	
 	standard_handler(standard_handler const &other);
 	standard_handler& operator = (standard_handler const &other);
 	void swap(standard_handler &other) throw ();

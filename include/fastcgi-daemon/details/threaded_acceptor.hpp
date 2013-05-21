@@ -51,7 +51,7 @@ public:
 
 	void stop();
 	void start(thread_count_type nthreads);
-	
+
 	void listen(descriptor_type const &ep);
 	void attach_logger(boost::shared_ptr<logger> const &log);
 
@@ -63,6 +63,7 @@ private:
 	
 	bool stopped() const;
 	void stopped(bool value);
+	
 	void run_accept_loop(descriptor_type const &desc);
 	void log_handling(boost::shared_ptr<context_type> const &ctx);
 
@@ -134,6 +135,7 @@ threaded_acceptor<UrlMatcher>::listen(typename threaded_acceptor<UrlMatcher>::de
 template <typename UrlMatcher> inline void
 threaded_acceptor<UrlMatcher>::attach_logger(boost::shared_ptr<logger> const &log) {
 	assert(log);
+	matcher_.attach_logger(log);
 	logger_ = log;
 }
 
@@ -161,7 +163,7 @@ threaded_acceptor<UrlMatcher>::run_accept_loop(typename threaded_acceptor<UrlMat
 			boost::shared_ptr<context_type> ctx(new context_type(desc));
 			ctx->accept();
 			log_handling(ctx);
-			matcher_.handle(ctx, *logger_);
+			matcher_.handle(ctx);
 			ctx->finish();
 		}
 		catch (fatal_error const &) {

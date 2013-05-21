@@ -49,10 +49,10 @@ public:
 	urltree();
 	virtual ~urltree();
 	
-	void add(url_type url, descriptor_type const &desc);
-	void handle(boost::shared_ptr<context_type> const &ctx, logger &log);
-
 	invoker_type& invoker();
+	void add(url_type url, descriptor_type const &desc);
+	void attach_logger(boost::shared_ptr<logger> const &log);
+	void handle(boost::shared_ptr<context_type> const &ctx);
 
 private:
 	urltree(urltree const &);
@@ -83,7 +83,7 @@ public:
 	void descriptor(descriptor_type const &desc);
 	boost::shared_ptr<type> get(range<char const*> const &path);
 	
-	void invoke(boost::shared_ptr<context_type> const &ctx, logger &log);
+	void invoke(boost::shared_ptr<context_type> const &ctx);
 	type* find(range<char const*> const &path);
 
 private:
@@ -109,6 +109,11 @@ template <typename Invoker> inline
 urltree<Invoker>::~urltree() {
 }
 
+template <typename Invoker> inline typename urltree<Invoker>::invoker_type&
+urltree<Invoker>::invoker() {
+	return invoker_;
+}
+
 template <typename Invoker> inline void
 urltree<Invoker>::add(url_type url, typename urltree<Invoker>::descriptor_type const &desc) {
 	
@@ -129,7 +134,12 @@ urltree<Invoker>::add(url_type url, typename urltree<Invoker>::descriptor_type c
 }
 
 template <typename Invoker> inline void
-urltree<Invoker>::handle(boost::shared_ptr<typename urltree<Invoker>::context_type> const &ctx, logger &log) {
+urltree<Invoker>::attach_logger(boost::shared_ptr<logger> const &log) {
+	invoker_.attach_logger(log);
+}
+
+template <typename Invoker> inline void
+urltree<Invoker>::handle(boost::shared_ptr<typename urltree<Invoker>::context_type> const &ctx) {
 	
 	typedef range<char const*> range_type;
 	typedef split_if_equal<char> predicate_type;
@@ -144,12 +154,7 @@ urltree<Invoker>::handle(boost::shared_ptr<typename urltree<Invoker>::context_ty
 	for (tokenizer_type::const_iterator i = tok.begin(), end = tok.end(); i != end; ++i) {
 		node = node->find(*i);
 	}
-	node->invoke(ctx, log);
-}
-
-template <typename Invoker> inline typename urltree<Invoker>::invoker_type&
-urltree<Invoker>::invoker() {
-	return invoker_;
+	node->invoke(ctx);
 }
 
 template <typename Invoker> inline 
@@ -187,8 +192,8 @@ urltree_node<Invoker>::get(range<char const*> const &path) {
 }
 
 template <typename Invoker> inline void
-urltree_node<Invoker>::invoke(boost::shared_ptr<typename urltree_node<Invoker>::context_type> const &ctx, logger &log) {
-	descriptor_.invoke(ctx, log);
+urltree_node<Invoker>::invoke(boost::shared_ptr<typename urltree_node<Invoker>::context_type> const &ctx) {
+	descriptor_.invoke(ctx);
 }
 
 template <typename Invoker> inline typename urltree_node<Invoker>::type*

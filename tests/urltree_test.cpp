@@ -24,12 +24,12 @@ BOOST_AUTO_TEST_CASE(test_existent) {
 	
 	using namespace details;
 
-	null_logger log;
 	urltree<default_invoker<mock_handler>::type> tree;
+	tree.attach_logger(boost::shared_ptr<logger>(new null_logger()));
 	tree.add(url_type("/abc/def/ghi"), tree.invoker().descriptor(mock_handler("the name")));
 	
 	boost::shared_ptr<mock_context> ctx(new mock_context("/abc/def/ghi"));
-	tree.handle(ctx, log);
+	tree.handle(ctx);
 	
 	BOOST_CHECK_EQUAL("the name", ctx->response().content());
 }
@@ -38,13 +38,14 @@ BOOST_AUTO_TEST_CASE(test_wildcard) {
 
 	using namespace details;
 
-	null_logger log;
 	urltree<default_invoker<mock_handler>::type> tree;
+	tree.attach_logger(boost::shared_ptr<logger>(new null_logger()));
 	tree.add(url_type("/abc/*/ghi"), tree.invoker().descriptor(mock_handler("the name")));
 	tree.add(url_type("/abc/def/*"), tree.invoker().descriptor(mock_handler("the other name")));
 	
 	boost::shared_ptr<mock_context> ctx(new mock_context("/abc/def/ghi"));
-	tree.handle(ctx, log);
+	tree.handle(ctx);
+
 	BOOST_CHECK_EQUAL("the other name", ctx->response().content());
 }
 
@@ -52,13 +53,13 @@ BOOST_AUTO_TEST_CASE(test_existent_wildcard) {
 	
 	using namespace details;
 
-	null_logger log;
 	urltree<default_invoker<mock_handler>::type> tree;
+	tree.attach_logger(boost::shared_ptr<logger>(new null_logger()));
 	tree.add(url_type("/abc/def/*"), tree.invoker().descriptor(mock_handler("the name")));
 	tree.add(url_type("/abc/def/ghi"), tree.invoker().descriptor(mock_handler("the other name")));
 	
 	boost::shared_ptr<mock_context> ctx(new mock_context("/abc/def/ghi"));
-	tree.handle(ctx, log);
+	tree.handle(ctx);
 	BOOST_CHECK_EQUAL("the other name", ctx->response().content());
 }
 
@@ -66,14 +67,14 @@ BOOST_AUTO_TEST_CASE(test_nonexistent) {
 
 	using namespace details;
 	
-	null_logger log;
 	urltree<default_invoker<mock_handler>::type> tree;
+	tree.attach_logger(boost::shared_ptr<logger>(new null_logger()));
 	tree.add(url_type("/abc/def/*"), tree.invoker().descriptor(mock_handler("the name")));
 
 	boost::shared_ptr<mock_context> ctx;
 	ctx.reset(new mock_context("/"));
 	
-	BOOST_CHECK_EXCEPTION(tree.handle(ctx, log), http_error, is_not_found);
+	BOOST_CHECK_EXCEPTION(tree.handle(ctx), http_error, is_not_found);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

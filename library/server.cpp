@@ -56,16 +56,18 @@ server::attach_logger(boost::shared_ptr<logger> const &log) {
 }
 
 void
-server::create_request_queue(queue_name_type, thread_count_type nthreads) {
+server::create_queue(queue_name_type name, thread_count_type nthreads) {
+	impl_type::invoker_type &invoker = impl_->invoker();
+	invoker.create_queue(name, nthreads);
 }
 
 void
 server::attach_handler(url_type url, queue_name_type queue, boost::shared_ptr<request_handler> const &handler, http_method_mask const &mask) {
 	using namespace details;
-	
-	standard_handler sth(handler, mask);
-	urltree<threaded_invoker<standard_handler>::type> &tree = impl_->matcher();
-	
+	impl_type::invoker_type &invoker = impl_->invoker();
+	impl_type::matcher_type &matcher = impl_->matcher();
+	impl_type::invoker_type::descriptor_type desc = invoker.descriptor(queue, standard_handler(handler, mask));
+	matcher.add(url, desc);
 }
 
 statistics
