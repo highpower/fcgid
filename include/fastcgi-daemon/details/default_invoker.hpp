@@ -45,10 +45,11 @@ public:
 	typedef typename handler_type::context_type context_type;
 	typedef default_invoker_descriptor<Handler> descriptor_type;
 	
+	logger& log();
 	descriptor_type descriptor(Handler const &handler);
 	void handle(handler_type const &handler, boost::shared_ptr<context_type> const &ctx) throw ();
 	void attach_logger(boost::shared_ptr<logger> const &log);
-	void log(char const *when, boost::shared_ptr<context_type> const &ctx, std::exception const &e);
+	void error(char const *when, boost::shared_ptr<context_type> const &ctx, std::exception const &e);
 
 private:
 	default_invoker(default_invoker const &);
@@ -85,6 +86,11 @@ template <typename Handler> inline
 default_invoker<Handler>::~default_invoker() {
 }
 
+template <typename Handler> inline logger&
+default_invoker<Handler>::log() {
+	return *log_;
+}
+
 template <typename Handler> inline typename default_invoker<Handler>::descriptor_type
 default_invoker<Handler>::descriptor(typename default_invoker<Handler>::handler_type const &handler) {
 	return descriptor_type(handler, this);
@@ -93,13 +99,13 @@ default_invoker<Handler>::descriptor(typename default_invoker<Handler>::handler_
 template <typename Handler> inline void
 default_invoker<Handler>::handle(typename default_invoker<Handler>::handler_type const &handler, boost::shared_ptr<typename default_invoker<Handler>::context_type> const &ctx) throw () {
 	try {
-		handler.handle(ctx, *log_);
+		handler.handle(ctx, log());
 	}
 	catch (http_error const &e) {
-		log("exception occured", ctx, e);
+		error("exception occured", ctx, e);
 	}
 	catch (std::exception const &e) {
-		log("http error occured", ctx, e);
+		error("http error occured", ctx, e);
 	}
 }
 
@@ -109,7 +115,7 @@ default_invoker<Handler>::attach_logger(boost::shared_ptr<logger> const &log) {
 }
 
 template <typename Handler> inline void
-default_invoker<Handler>::log(char const *issue, boost::shared_ptr<typename default_invoker<Handler>::context_type> const &ctx, std::exception const &e) {
+default_invoker<Handler>::error(char const *issue, boost::shared_ptr<typename default_invoker<Handler>::context_type> const &ctx, std::exception const &e) {
 	typedef typename context_type::request_type request_type;
 	request_type const &req = ctx->request();
 	typename request_type::string_type const &pi = req.path_info();

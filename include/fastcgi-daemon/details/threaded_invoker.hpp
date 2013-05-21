@@ -81,7 +81,6 @@ private:
 	threaded_invoker& operator = (threaded_invoker const &);
 	void poll_queue(boost::shared_ptr<task_queue_type> queue);
 	
-	
 	typedef boost::shared_ptr<task_queue_type> task_queue_ptr_type;
 	typedef std::map<std::string, task_queue_ptr_type> queue_map_type;
 	
@@ -97,12 +96,11 @@ public:
 	typedef typename handler_type::context_type context_type;
 
 	threaded_invoker_descriptor();
-	threaded_invoker_descriptor(handler_type const &handler, threaded_invoker<Handler> *invoker,  boost::shared_ptr<typename threaded_invoker<Handler>::task_queue_type> const &queue);
+	threaded_invoker_descriptor(handler_type const &handler, boost::shared_ptr<typename threaded_invoker<Handler>::task_queue_type> const &queue);
 	void invoke(boost::shared_ptr<context_type> const &ctx);
 
 private:
 	handler_type handler_;	
-	threaded_invoker<Handler> *invoker_;
 	boost::shared_ptr<typename threaded_invoker<Handler>::task_queue_type> queue_;
 };
 
@@ -172,7 +170,7 @@ threaded_invoker<Handler>::descriptor(queue_name_type name, typename threaded_in
 	if (queues_.end() == i) {
 		throw runtime_error("no queue named %s", name.get());
 	}
-	return descriptor_type(handler, this, i->second);
+	return descriptor_type(handler, i->second);
 }
 
 template <typename Handler> inline void
@@ -189,19 +187,21 @@ threaded_invoker<Handler>::poll_queue(boost::shared_ptr<typename threaded_invoke
 			}
 		}
 		catch (std::exception const &e) {
+			logger &log = base_type::log();
+			log.error("exception occured while popping request from queue: %s", e.what());
 		}
 	}
 }
 
 template <typename Handler> inline 
 threaded_invoker_descriptor<Handler>::threaded_invoker_descriptor() :
-	handler_(), invoker_(), queue_()
+	handler_(), queue_()
 {
 }
 
 template <typename Handler> inline 
-threaded_invoker_descriptor<Handler>::threaded_invoker_descriptor(typename threaded_invoker_descriptor<Handler>::handler_type const &handler, threaded_invoker<Handler> *invoker, boost::shared_ptr<typename threaded_invoker<Handler>::task_queue_type> const &queue) :
-	handler_(handler), invoker_(invoker), queue_(queue)
+threaded_invoker_descriptor<Handler>::threaded_invoker_descriptor(typename threaded_invoker_descriptor<Handler>::handler_type const &handler, boost::shared_ptr<typename threaded_invoker<Handler>::task_queue_type> const &queue) :
+	handler_(handler), queue_(queue)
 {
 }
 
