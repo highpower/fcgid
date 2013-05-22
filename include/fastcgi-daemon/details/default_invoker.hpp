@@ -50,7 +50,9 @@ public:
 	
 	descriptor_type descriptor(Handler const &handler);
 	void handle(handler_type const &handler, boost::shared_ptr<context_type> const &ctx) throw ();
-	void error(char const *when, boost::shared_ptr<context_type> const &ctx, std::exception const &e);
+	
+	void info(char const *issue, boost::shared_ptr<context_type> const &ctx);
+	void error(char const *issue, boost::shared_ptr<context_type> const &ctx, std::exception const &e);
 
 private:
 	default_invoker(default_invoker const &);
@@ -105,7 +107,9 @@ default_invoker<Handler>::descriptor(typename default_invoker<Handler>::handler_
 template <typename Handler> inline void
 default_invoker<Handler>::handle(typename default_invoker<Handler>::handler_type const &handler, boost::shared_ptr<typename default_invoker<Handler>::context_type> const &ctx) throw () {
 	try {
+		info("request started", ctx);
 		handler.handle(ctx, log());
+		info("request handled", ctx);
 	}
 	catch (http_error const &e) {
 		error("exception occured", ctx, e);
@@ -113,6 +117,14 @@ default_invoker<Handler>::handle(typename default_invoker<Handler>::handler_type
 	catch (std::exception const &e) {
 		error("http error occured", ctx, e);
 	}
+}
+
+template <typename Handler> inline void
+default_invoker<Handler>::info(char const *issue, boost::shared_ptr<typename default_invoker<Handler>::context_type> const &ctx) {
+	typedef typename context_type::request_type request_type;
+	request_type const &req = ctx->request();
+	typename request_type::string_type const &pi = req.path_info();
+	log_->info("%s : %s", issue, pi.c_str());
 }
 
 template <typename Handler> inline void

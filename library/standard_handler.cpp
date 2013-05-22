@@ -41,7 +41,6 @@ standard_handler::standard_handler(boost::shared_ptr<request_handler> const &han
 
 void
 standard_handler::handle(boost::shared_ptr<standard_handler::context_type> ctx, logger &log) const {
-	request const &req = ctx->request();
 	handler_->handle_request(ctx->request(), ctx->response(), log);
 }
 

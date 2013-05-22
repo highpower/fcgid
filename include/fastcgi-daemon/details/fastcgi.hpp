@@ -23,8 +23,14 @@
 #include "fastcgi-daemon/config.hpp"
 #include "fastcgi-daemon/forward.hpp"
 #include "fastcgi-daemon/details/range.hpp"
+#include "fastcgi-daemon/details/resource.hpp"
 
 namespace fcgid { namespace details {
+
+struct fastcgi_request_traits {
+	void destroy(FCGX_Request *req);
+	static FCGX_Request* default_value();
+};
 
 class fastcgi {
 
@@ -48,11 +54,12 @@ private:
 	fastcgi(fastcgi const &);
 	fastcgi& operator = (fastcgi const &);
 
-	bool is_accepted() const;
+	bool accepted() const;
 	static void init_fastcgi_engine();
 
 private:
-	FCGX_Request req_;
+	bool pooled_;
+	resource<FCGX_Request*, fastcgi_request_traits> req_;
 };
 
 }} // namespaces

@@ -28,6 +28,8 @@
 
 namespace fcgid { namespace details {
 
+class fastcgi;
+
 class endpoint_impl {
 
 public:
