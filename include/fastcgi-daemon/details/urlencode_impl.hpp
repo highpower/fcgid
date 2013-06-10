@@ -50,7 +50,9 @@ urlencode_impl(Range const &range, Result &result) {
 			result.push_back(*i);
 			break;
 		default:
-			typename Range::value_type bytes[3] = { '%', (*i & 0xF0) / 16, *i & 0x0F };
+			typename Range::value_type bytes[3] = { '%',
+                                                    static_cast<char>((*i & 0xF0) / 16),
+                                                    static_cast<char>(*i & 0x0F) };
 			for (std::size_t i = 1; i < sizeof(bytes); ++i) {
 				bytes[i] += (bytes[i] > 9) ? 'A' - 10 : '0';
 			}
