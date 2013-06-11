@@ -36,6 +36,9 @@
 namespace fcgid { namespace details {
 
 template <typename UrlMatcher>
+class threaded_acceptor_listener;
+
+template <typename UrlMatcher>
 class threaded_acceptor : private virtual boost::thread_group {
 
 public:
@@ -52,10 +55,9 @@ public:
 	void stop();
 	void start(thread_count_type nthreads);
 
+	matcher_type& matcher();
 	void listen(descriptor_type const &ep);
 	void add(boost::shared_ptr<logger> const &log);
-
-	matcher_type& matcher();
 
 private:
 	threaded_acceptor(threaded_acceptor const &);
@@ -75,6 +77,16 @@ private:
 	descriptor_list_type descriptors_;
 	boost::shared_ptr<logger> logger_;
 	mutable boost::mutex stopped_mutex_;
+};
+
+template <typename UrlMatcher>
+class threaded_acceptor_listener {
+
+public:
+	threaded_acceptor_listener();
+	virtual ~threaded_acceptor_listener();
+	virtual void on_request_accepted(typename threaded_acceptor<UrlMatcher>::descriptor_type const &desc) = 0;
+	virtual void on_request_finished(typename threaded_acceptor<UrlMatcher>::descriptor_type const &desc) = 0;
 };
 
 template <typename UrlMatcher> inline

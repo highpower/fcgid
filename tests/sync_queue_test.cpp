@@ -21,7 +21,7 @@ BOOST_AUTO_TEST_CASE(test_queue) {
 	
 	using namespace details;
 	
-	unbounded_sync_queue<size_t> queue;
+	unbounded_sync_queue<size_t> queue("test");
 	boost::thread th(boost::bind(&use_queue, boost::ref(queue), 1000));
 	
 	for (std::size_t i = 0; i < 1000; ++i) {

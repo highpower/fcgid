@@ -19,6 +19,7 @@
 
 #include <queue>
 #include <utility>
+#include <cstring>
 #include <functional>
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
@@ -41,11 +42,12 @@ template <typename BoundsChecker, typename Item>
 class sync_queue_base : private BoundsChecker {
 
 public:
-	sync_queue_base();
+	sync_queue_base(char const *name);
 	virtual ~sync_queue_base();
 	
 	void stop();
 	bool stopped() const;
+	char const* name() const;
 	
 	std::pair<Item, bool> pop();
 	void push(Item const &item);
@@ -59,6 +61,7 @@ private:
 
 private:
 	bool stopped_;
+	char queue_name_[256];
 	std::queue<Item> items_;
 	boost::condition condition_;
 	boost::mutex mutable mutex_;
@@ -87,20 +90,27 @@ private:
 
 template <typename Item>
 struct unbounded_sync_queue : public sync_queue_base<null_bounds_checker, Item> {
+	typedef sync_queue_base<null_bounds_checker, Item> base_type;
+	unbounded_sync_queue(char const *name);
 };
 
 template <typename Item, std::size_t N>
 struct static_bounded_sync_queue : public sync_queue_base<static_bounds_checker<N>, Item> {
+	typedef sync_queue_base<static_bounds_checker<N>, Item> base_type;
+	static_bounded_sync_queue(char const *name);
 };
 
 template <typename Item>
 struct dynamic_bounded_sync_queue : public sync_queue_base<dynamic_bounds_checker, Item> {
+	typedef sync_queue_base<dynamic_bounds_checker, Item> base_type;
+	dynamic_bounded_sync_queue(char const *name);
 };
 
 template <typename BoundsChecker, typename Item> inline
-sync_queue_base<BoundsChecker, Item>::sync_queue_base() :
+sync_queue_base<BoundsChecker, Item>::sync_queue_base(char const *name) :
 	stopped_(false), ready_()
 {
+	strncpy(queue_name_, name, sizeof(queue_name_) - 1);
 	ready_ = boost::bind(&sync_queue_base<BoundsChecker, Item>::ready, this);
 }
 
@@ -119,6 +129,11 @@ template <typename BoundsChecker, typename Item> inline bool
 sync_queue_base<BoundsChecker, Item>::stopped() const {
 	boost::mutex::scoped_lock lock(mutex_);
 	return stopped_;
+}
+
+template <typename BoundsChecker, typename Item> inline char const*
+sync_queue_base<BoundsChecker, Item>::name() const {
+	return queue_name_;
 }
 
 template <typename BoundsChecker, typename Item> inline std::pair<Item, bool>
@@ -152,6 +167,24 @@ sync_queue_base<BoundsChecker, Item>::ready() const {
 template <std::size_t N> inline bool
 static_bounds_checker<N>::reached(std::size_t size) const {
 	return N == size;
+}
+
+template <typename Item>
+unbounded_sync_queue<Item>::unbounded_sync_queue(char const *name) :
+	base_type(name)
+{
+}
+
+template <typename Item, std::size_t N>
+static_bounded_sync_queue<Item, N>::static_bounded_sync_queue(char const *name) :
+	base_type(name)
+{
+}
+
+template <typename Item>
+dynamic_bounded_sync_queue<Item>::dynamic_bounded_sync_queue(char const *name) :
+	base_type(name)
+{
 }
 
 }} // namespaces

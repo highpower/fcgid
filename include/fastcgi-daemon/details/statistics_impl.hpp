@@ -19,8 +19,10 @@
 #define FASTCGI_DAEMON_DETAILS_STATISTICS_IMPL_HPP_INCLUDED
 
 #include <cstddef>
+#include <boost/thread/mutex.hpp>
 
 #include "fastcgi-daemon/config.hpp"
+#include "fastcgi-daemon/typedefs.hpp"
 
 namespace fcgid { namespace details {
 
@@ -30,20 +32,32 @@ public:
 	statistics_impl();
 	virtual ~statistics_impl();
 	
+	void request_handled();
 	std::size_t requests_handled() const;
+	
+	void exception_occured();
 	std::size_t exceptions_occured() const;
+	
+	void client_error_occured();
 	std::size_t client_errors_occured() const;
+	
+	void server_error_occured();
 	std::size_t server_errors_occured() const;
 
+	void request_accepted();
 	std::size_t requests_accepted() const;
-	std::size_t requests_in_queue(char const *name) const;
+	
+	std::size_t requests_in_queue(queue_name_type name) const;
 
 private:
 	statistics_impl(statistics_impl const &);
 	statistics_impl& operator = (statistics_impl const &);
 
 private:
-	
+	boost::mutex mutable mutex_;
+	std::size_t requests_handled_, exceptions_occured_;
+	std::size_t requests_accepted_, requests_in_queue_;
+	std::size_t client_errors_occured_, server_errors_occured_;
 };
 
 }} // namespaces

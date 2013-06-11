@@ -148,7 +148,7 @@ template <typename Handler> inline void
 threaded_invoker<Handler>::create_queue(queue_name_type name, thread_count_type nthreads) {
 	typename queue_map_type::iterator i = queues_.find(name.get());
 	if (queues_.end() == i) {
-		boost::shared_ptr<task_queue_type> queue(new task_queue_type());
+		boost::shared_ptr<task_queue_type> queue(new task_queue_type(name.get()));
 		try {
 			std::size_t nth = nthreads.get();
 			boost::function<void()> f(boost::bind(&threaded_invoker<Handler>::poll_queue, this, queue));

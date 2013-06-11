@@ -13,7 +13,7 @@
 namespace fcgid { namespace tests {
 
 bool
-accepts_bad_status_error(error const &e) {
+accepts_bad_status_error(error const &) {
 	return true;
 }
 

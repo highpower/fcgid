@@ -19,10 +19,11 @@
 #define FASTCGI_STATISTICS_CONFIG_HPP_INCLUDED
 
 #include <cstddef>
-#include <boost/shared_ptr.hpp>
+#include <boost/ref.hpp>
 
 #include "fastcgi-daemon/config.hpp"
 #include "fastcgi-daemon/forward.hpp"
+#include "fastcgi-daemon/typedefs.hpp"
 
 namespace fcgid { 
 
@@ -31,9 +32,7 @@ class FASTCGI_DAEMON_API statistics {
 public:
 	typedef details::statistics_impl impl_type;
 
-	statistics();
-	explicit statistics(boost::shared_ptr<impl_type> const &impl);
-	
+	statistics(impl_type const &impl);
 	statistics(statistics const &other);
 	statistics& operator = (statistics const &other);
 	void swap(statistics &other) throw ();
@@ -44,10 +43,10 @@ public:
 	std::size_t server_errors_occured() const;
 
 	std::size_t requests_accepted() const;
-	std::size_t requests_in_queue(char const *name) const;
+	std::size_t requests_in_queue(queue_name_type queue) const;
 
 private:
-	boost::shared_ptr<impl_type> impl_;
+	boost::reference_wrapper<impl_type const> impl_;
 };
 
 inline FASTCGI_DAEMON_API void

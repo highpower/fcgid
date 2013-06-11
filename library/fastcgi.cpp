@@ -14,6 +14,16 @@ namespace fcgid { namespace details {
 
 boost::once_flag fastcgi_init_flag;
 
+FCGX_Request*
+fastcgi_request_traits::default_value() {
+	return static_cast<FCGX_Request*>(0);
+}
+
+void
+fastcgi_request_traits::destroy(FCGX_Request *req) {
+	FCGX_Free(req, 1);
+}
+
 fastcgi::fastcgi(endpoint const &desc)
 {
 	boost::call_once(&fastcgi::init_fastcgi_engine, fastcgi_init_flag);
