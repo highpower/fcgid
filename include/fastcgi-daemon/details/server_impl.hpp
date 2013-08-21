@@ -32,12 +32,10 @@ class server_impl : public threaded_acceptor<urltree<threaded_invoker<standard_h
 public:
 	server_impl();
 	virtual ~server_impl();
-	
+
 	typedef threaded_invoker<standard_handler> invoker_type;
 	typedef urltree<invoker_type> matcher_type;
-	typedef threaded_acceptor<matcher_type> base_type;
-
-	matcher_type& matcher();
+	
 	invoker_type& invoker();
 	
 private:

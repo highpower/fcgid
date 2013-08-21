@@ -10,4 +10,10 @@ server_impl::server_impl()
 server_impl::~server_impl() {
 }
 
+server_impl::invoker_type&
+server_impl::invoker() {
+	matcher_type &m = matcher();
+	return m.invoker();
+}
+
 }} // namespaces
