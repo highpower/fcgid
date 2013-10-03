@@ -137,14 +137,6 @@ private:
 	range<Iter> name_, type_, file_name_;
 };
 
-template <typename Sequence> inline std::pair<Sequence, Sequence>
-split_key_value(Sequence const &seq) {
-
-	Sequence head, tail;
-	split_once(seq, '=', head, tail);
-	return std::make_pair(trim(head), trim(tail));
-}
-
 template <typename Request> inline
 request_parser<Request>::request_parser(typename request_parser<Request>::request_type &req) :
 	request_(req)

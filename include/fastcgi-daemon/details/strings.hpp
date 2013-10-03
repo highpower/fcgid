@@ -18,6 +18,7 @@
 #ifndef FASTCGI_DAEMON_DETAILS_STRINGS_HPP_INCLUDED
 #define FASTCGI_DAEMON_DETAILS_STRINGS_HPP_INCLUDED
 
+#include <utility>
 #include <boost/type_traits.hpp>
 
 #include "fastcgi-daemon/config.hpp"
@@ -201,6 +202,13 @@ ends_with(Sequence const &seq, char const *suffix) {
 template <typename Suffix> inline bool
 ends_with(char const *string, Suffix const &suffix) {
 	return ends_with(make_range(string), suffix, static_cast<typename Suffix::value_type const*>(0));
+}
+
+template <typename Sequence> inline std::pair<Sequence, Sequence>
+split_key_value(Sequence const &seq) {
+	Sequence head, tail;
+	split_once(seq, '=', head, tail);
+	return std::make_pair(trim(head), trim(tail));
 }
 
 }} // namespaces

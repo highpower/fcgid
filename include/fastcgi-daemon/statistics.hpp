@@ -31,8 +31,8 @@ class FASTCGI_DAEMON_API statistics {
 
 public:
 	typedef details::statistics_impl impl_type;
+	explicit statistics(impl_type const &impl);
 
-	statistics(impl_type const &impl);
 	statistics(statistics const &other);
 	statistics& operator = (statistics const &other);
 	void swap(statistics &other) throw ();
