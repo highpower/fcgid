@@ -20,9 +20,9 @@
 
 #include <map>
 #include <queue>
+#include <memory>
 #include <exception>
 
-#include <boost/shared_ptr.hpp>
 #include <boost/thread/mutex.hpp>
 #include <boost/thread/thread.hpp>
 #include <boost/thread/condition.hpp>
@@ -43,14 +43,14 @@ public:
 	typedef typename handler_type::context_type context_type;
 
 	threaded_invoker_task();
-	threaded_invoker_task(handler_type const &handler, boost::shared_ptr<context_type> const &ctx);
+	threaded_invoker_task(handler_type const &handler, std::shared_ptr<context_type> const &ctx);
 
 	handler_type const& handler() const;
-	boost::shared_ptr<context_type> const& context() const;
+	std::shared_ptr<context_type> const& context() const;
 	
 private:	
 	handler_type const *handler_;
-	boost::shared_ptr<context_type> context_;
+	std::shared_ptr<context_type> context_;
 };
 
 template <typename Handler>
@@ -79,9 +79,9 @@ public:
 private:
 	threaded_invoker(threaded_invoker const &);
 	threaded_invoker& operator = (threaded_invoker const &);
-	void poll_queue(boost::shared_ptr<task_queue_type> queue);
+	void poll_queue(std::shared_ptr<task_queue_type> queue);
 	
-	typedef boost::shared_ptr<task_queue_type> task_queue_ptr_type;
+	typedef std::shared_ptr<task_queue_type> task_queue_ptr_type;
 	typedef std::map<std::string, task_queue_ptr_type> queue_map_type;
 	
 private:
@@ -96,12 +96,12 @@ public:
 	typedef typename handler_type::context_type context_type;
 
 	threaded_invoker_descriptor();
-	threaded_invoker_descriptor(handler_type const &handler, boost::shared_ptr<typename threaded_invoker<Handler>::task_queue_type> const &queue);
-	void invoke(boost::shared_ptr<context_type> const &ctx);
+	threaded_invoker_descriptor(handler_type const &handler, std::shared_ptr<typename threaded_invoker<Handler>::task_queue_type> const &queue);
+	void invoke(std::shared_ptr<context_type> const &ctx);
 
 private:
 	handler_type handler_;	
-	boost::shared_ptr<typename threaded_invoker<Handler>::task_queue_type> queue_;
+	std::shared_ptr<typename threaded_invoker<Handler>::task_queue_type> queue_;
 };
 
 template <typename Handler> inline 
@@ -111,7 +111,7 @@ threaded_invoker_task<Handler>::threaded_invoker_task() :
 }
 
 template <typename Handler> inline 
-threaded_invoker_task<Handler>::threaded_invoker_task(typename threaded_invoker_task<Handler>::handler_type const &handler, boost::shared_ptr<typename threaded_invoker_task<Handler>::context_type> const &ctx) :
+threaded_invoker_task<Handler>::threaded_invoker_task(typename threaded_invoker_task<Handler>::handler_type const &handler, std::shared_ptr<typename threaded_invoker_task<Handler>::context_type> const &ctx) :
 	handler_(&handler), context_(ctx)
 {
 }
@@ -121,7 +121,7 @@ threaded_invoker_task<Handler>::handler() const {
 	return *handler_;
 }
 
-template <typename Handler> inline boost::shared_ptr<typename threaded_invoker_task<Handler>::context_type> const&
+template <typename Handler> inline std::shared_ptr<typename threaded_invoker_task<Handler>::context_type> const&
 threaded_invoker_task<Handler>::context() const {
 	return context_;
 }
@@ -148,7 +148,7 @@ template <typename Handler> inline void
 threaded_invoker<Handler>::create_queue(queue_name_type name, thread_count_type nthreads) {
 	typename queue_map_type::iterator i = queues_.find(name.get());
 	if (queues_.end() == i) {
-		boost::shared_ptr<task_queue_type> queue(new task_queue_type(name.get()));
+		std::shared_ptr<task_queue_type> queue(new task_queue_type(name.get()));
 		try {
 			std::size_t nth = nthreads.get();
 			boost::function<void()> f(boost::bind(&threaded_invoker<Handler>::poll_queue, this, queue));
@@ -174,7 +174,7 @@ threaded_invoker<Handler>::descriptor(queue_name_type name, typename threaded_in
 }
 
 template <typename Handler> inline void
-threaded_invoker<Handler>::poll_queue(boost::shared_ptr<typename threaded_invoker<Handler>::task_queue_type> queue) {
+threaded_invoker<Handler>::poll_queue(std::shared_ptr<typename threaded_invoker<Handler>::task_queue_type> queue) {
 	while (true) {
 		try {
 			std::pair<task_type, bool> result = queue->pop();
@@ -200,13 +200,13 @@ threaded_invoker_descriptor<Handler>::threaded_invoker_descriptor() :
 }
 
 template <typename Handler> inline 
-threaded_invoker_descriptor<Handler>::threaded_invoker_descriptor(typename threaded_invoker_descriptor<Handler>::handler_type const &handler, boost::shared_ptr<typename threaded_invoker<Handler>::task_queue_type> const &queue) :
+threaded_invoker_descriptor<Handler>::threaded_invoker_descriptor(typename threaded_invoker_descriptor<Handler>::handler_type const &handler, std::shared_ptr<typename threaded_invoker<Handler>::task_queue_type> const &queue) :
 	handler_(handler), queue_(queue)
 {
 }
 
 template <typename Handler> inline void
-threaded_invoker_descriptor<Handler>::invoke(boost::shared_ptr<typename threaded_invoker_descriptor<Handler>::context_type> const &ctx) {
+threaded_invoker_descriptor<Handler>::invoke(std::shared_ptr<typename threaded_invoker_descriptor<Handler>::context_type> const &ctx) {
 	threaded_invoker_task<Handler> task(handler_, ctx);
 	queue_->push(task);
 }

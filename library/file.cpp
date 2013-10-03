@@ -15,7 +15,7 @@ file::file() :
 file::~file() {
 }
 
-file::file(boost::shared_ptr<file::impl_type> const &impl) :
+file::file(std::shared_ptr<file::impl_type> const &impl) :
 	impl_(impl)
 {
 }

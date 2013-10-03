@@ -24,7 +24,6 @@
 #include <iostream>
 #include <iterator>
 #include <algorithm>
-#include <boost/static_assert.hpp>
 
 #include "fastcgi-daemon/config.hpp"
 
@@ -66,8 +65,8 @@ private:
 	static pos_type const bad_position;
 	static std::size_t const buffer_size = 4096;
 
-	BOOST_STATIC_ASSERT(std::numeric_limits<off_type>::is_signed);
-	BOOST_STATIC_ASSERT(std::numeric_limits<difference_type>::is_signed);
+	static_assert(std::numeric_limits<off_type>::is_signed, "offset is not signed");
+	static_assert(std::numeric_limits<difference_type>::is_signed, "difference is not signed");
 		
 private:
 	Iter current_;

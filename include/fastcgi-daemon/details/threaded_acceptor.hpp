@@ -19,13 +19,13 @@
 #define FASTCGI_DAEMON_DETAILS_THREADED_ACCEPTOR_HPP_INCLUDED
 
 #include <list>
+#include <memory>
 #include <exception>
+#include <functional>
 
-#include <boost/ref.hpp>
 #include <boost/bind.hpp>
 #include <boost/thread.hpp>
 #include <boost/function.hpp>
-#include <boost/shared_ptr.hpp>
 
 #include "fastcgi-daemon/config.hpp"
 #include "fastcgi-daemon/logger.hpp"
@@ -57,7 +57,7 @@ public:
 
 	matcher_type& matcher();
 	void listen(descriptor_type const &ep);
-	void add(boost::shared_ptr<logger> const &log);
+	void add(std::shared_ptr<logger> const &log);
 
 private:
 	threaded_acceptor(threaded_acceptor const &);
@@ -67,15 +67,15 @@ private:
 	void stopped(bool value);
 	
 	void run_accept_loop(descriptor_type const &desc);
-	void log_handling(boost::shared_ptr<context_type> const &ctx);
+	void log_handling(std::shared_ptr<context_type> const &ctx);
 
 	typedef std::list<descriptor_type> descriptor_list_type;
 
 private:
 	bool stopped_;
 	matcher_type matcher_;
+	std::shared_ptr<logger> logger_;
 	descriptor_list_type descriptors_;
-	boost::shared_ptr<logger> logger_;
 	mutable boost::mutex stopped_mutex_;
 };
 
@@ -117,7 +117,7 @@ threaded_acceptor<UrlMatcher>::start(thread_count_type nthreads) {
 	
 	std::size_t nth = nthreads.get();
 	if (!logger_) {
-		add(boost::shared_ptr<logger>(new null_logger()));
+		add(std::shared_ptr<logger>(new null_logger()));
 	}
 	try {
 		for (typename descriptor_list_type::iterator i = descriptors_.begin(), end = descriptors_.end(); i != end; ++i) {
@@ -145,7 +145,7 @@ threaded_acceptor<UrlMatcher>::listen(typename threaded_acceptor<UrlMatcher>::de
 }
 
 template <typename UrlMatcher> inline void
-threaded_acceptor<UrlMatcher>::add(boost::shared_ptr<logger> const &log) {
+threaded_acceptor<UrlMatcher>::add(std::shared_ptr<logger> const &log) {
 	assert(log);
 	matcher_.add(log);
 	logger_ = log;
@@ -172,7 +172,7 @@ template <typename UrlMatcher> inline void
 threaded_acceptor<UrlMatcher>::run_accept_loop(typename threaded_acceptor<UrlMatcher>::descriptor_type const &desc) {
 	while (!stopped()) {
 		try {
-			boost::shared_ptr<context_type> ctx(new context_type(desc));
+			std::shared_ptr<context_type> ctx(new context_type(desc));
 			ctx->accept();
 			log_handling(ctx);
 			matcher_.handle(ctx);
@@ -189,7 +189,7 @@ threaded_acceptor<UrlMatcher>::run_accept_loop(typename threaded_acceptor<UrlMat
 }
 
 template <typename UrlMatcher> inline void
-threaded_acceptor<UrlMatcher>::log_handling(boost::shared_ptr<context_type> const &ctx) {
+threaded_acceptor<UrlMatcher>::log_handling(std::shared_ptr<context_type> const &ctx) {
 	typedef typename context_type::request_type request_type;
 	request_type const &req = ctx->request();
 	typename request_type::string_type const &pi = req.path_info();

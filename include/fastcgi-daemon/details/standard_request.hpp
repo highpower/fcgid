@@ -42,19 +42,19 @@ public:
 	virtual http_method method() const;
 	virtual std::string const& path_info() const;
 
-	virtual boost::shared_ptr<paramset> vars() const;
+	virtual std::shared_ptr<paramset> vars() const;
 	virtual bool has_var(std::string const &name) const;
 	virtual std::string const& var(std::string const &name) const;
 	
-	virtual boost::shared_ptr<paramset> cookies() const;
+	virtual std::shared_ptr<paramset> cookies() const;
 	virtual bool has_cookie(std::string const &name) const;
 	virtual std::string const& cookie(std::string const &name) const;
 
-	virtual boost::shared_ptr<paramset> args() const;
+	virtual std::shared_ptr<paramset> args() const;
 	virtual bool has_arg(std::string const &name) const;
 	virtual std::string const& arg(std::string const &name) const;
 
-	virtual boost::shared_ptr<fileset> files() const;
+	virtual std::shared_ptr<fileset> files() const;
 	virtual bool has_file(std::string const &name) const;
 	virtual file get_file(std::string const &name) const;
 	
@@ -94,7 +94,7 @@ standard_request<IO>::path_info() const {
 	return base_type::path_info();
 }
 
-template <typename IO> inline boost::shared_ptr<paramset>
+template <typename IO> inline std::shared_ptr<paramset>
 standard_request<IO>::vars() const {
 	typename base_type::string_map_type const &m = base_type::vars();
 	return make_paramset(m.begin(), m.end());
@@ -110,7 +110,7 @@ standard_request<IO>::var(std::string const &name) const {
 	return base_type::var(name);
 }
 
-template <typename IO> inline boost::shared_ptr<paramset>
+template <typename IO> inline std::shared_ptr<paramset>
 standard_request<IO>::cookies() const {
 	typename base_type::string_map_type const &m = base_type::cookies();
 	return make_paramset(m.begin(), m.end());
@@ -126,7 +126,7 @@ standard_request<IO>::cookie(std::string const &name) const {
 	return base_type::cookie(name);
 }
 
-template <typename IO> inline boost::shared_ptr<paramset>
+template <typename IO> inline std::shared_ptr<paramset>
 standard_request<IO>::args() const {
 	typename base_type::string_multimap_type const &m = base_type::args();
 	return make_paramset(m.begin(), m.end());
@@ -142,7 +142,7 @@ standard_request<IO>::arg(std::string const &name) const {
 	return base_type::arg(name);
 }
 
-template <typename IO> inline boost::shared_ptr<fileset>
+template <typename IO> inline std::shared_ptr<fileset>
 standard_request<IO>::files() const {
 	typename base_type::file_map_type const &m = base_type::files();
 	return make_fileset(m.begin(), m.end());

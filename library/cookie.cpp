@@ -99,7 +99,7 @@ cookie::str() const {
 	return impl_->str();
 }
 
-boost::shared_ptr<cookie::impl_type> const&
+std::shared_ptr<cookie::impl_type> const&
 cookie::impl() const {
 	return impl_;
 }

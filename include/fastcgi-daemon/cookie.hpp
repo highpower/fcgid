@@ -18,8 +18,8 @@
 #ifndef FASTCGI_DAEMON_COOKIE_HPP_INCLUDED
 #define FASTCGI_DAEMON_COOKIE_HPP_INCLUDED
 
+#include <memory>
 #include <string>
-#include <boost/shared_ptr.hpp>
 
 #include "fastcgi-daemon/config.hpp"
 #include "fastcgi-daemon/forward.hpp"
@@ -58,10 +58,10 @@ public:
 	void expire_time(std::string const &value);
 
 	std::string str() const;
-	boost::shared_ptr<impl_type> const& impl() const;
+	std::shared_ptr<impl_type> const& impl() const;
 
 private:
-	boost::shared_ptr<impl_type> impl_;
+	std::shared_ptr<impl_type> impl_;
 };
 
 inline FASTCGI_DAEMON_API void

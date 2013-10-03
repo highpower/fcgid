@@ -20,7 +20,7 @@
 
 #include <map>
 #include <list>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #include "fastcgi-daemon/config.hpp"
 #include "fastcgi-daemon/forward.hpp"
@@ -51,18 +51,18 @@ public:
 	
 	invoker_type& invoker();
 	void add(url_type url, descriptor_type const &desc);
-	void add(boost::shared_ptr<logger> const &log);
-	void handle(boost::shared_ptr<context_type> const &ctx);
+	void add(std::shared_ptr<logger> const &log);
+	void handle(std::shared_ptr<context_type> const &ctx);
 
 private:
-	urltree(urltree const &);
-	urltree& operator = (urltree const &);
+	urltree(urltree const &) = delete;
+	urltree& operator = (urltree const &) = delete;
 	typedef urltree_node<Invoker> node_type;
 	
 private:
 	invoker_type invoker_;
 	std::list<std::string> urls_;
-	boost::shared_ptr<node_type> root_;
+	std::shared_ptr<node_type> root_;
 };
 
 struct urltree_node_base {
@@ -81,14 +81,14 @@ public:
 	virtual ~urltree_node();
 	
 	void descriptor(descriptor_type const &desc);
-	boost::shared_ptr<type> get(range<char const*> const &path);
+	std::shared_ptr<type> get(range<char const*> const &path);
 	
-	void invoke(boost::shared_ptr<context_type> const &ctx);
+	void invoke(std::shared_ptr<context_type> const &ctx);
 	type* find(range<char const*> const &path);
 
 private:
 	typedef range<char const*> range_type;
-	typedef boost::shared_ptr<type> ptr_type;
+	typedef std::shared_ptr<type> ptr_type;
 	typedef std::map<range_type, ptr_type> children_map_type;
 
 	using urltree_node_base::wildcard_token;
@@ -125,7 +125,7 @@ urltree<Invoker>::add(url_type url, typename urltree<Invoker>::descriptor_type c
 	std::string const &urlstr = urls_.back();
 	range_type range(urlstr.c_str(), urlstr.c_str() + urlstr.size());
 	
-	boost::shared_ptr<node_type> node = root_;
+	std::shared_ptr<node_type> node = root_;
 	tokenizer_type tok(range, predicate_type('/'));
 	for (tokenizer_type::const_iterator i = tok.begin(), end = tok.end(); i != end; ++i) {
 		node = node->get(*i);
@@ -134,12 +134,12 @@ urltree<Invoker>::add(url_type url, typename urltree<Invoker>::descriptor_type c
 }
 
 template <typename Invoker> inline void
-urltree<Invoker>::add(boost::shared_ptr<logger> const &log) {
+urltree<Invoker>::add(std::shared_ptr<logger> const &log) {
 	invoker_.add(log);
 }
 
 template <typename Invoker> inline void
-urltree<Invoker>::handle(boost::shared_ptr<typename urltree<Invoker>::context_type> const &ctx) {
+urltree<Invoker>::handle(std::shared_ptr<typename urltree<Invoker>::context_type> const &ctx) {
 	
 	typedef range<char const*> range_type;
 	typedef split_if_equal<char> predicate_type;
@@ -172,7 +172,7 @@ urltree_node<Invoker>::descriptor(typename urltree_node<Invoker>::descriptor_typ
 	descriptor_ = desc;
 }
 
-template <typename Invoker> inline boost::shared_ptr<typename urltree_node<Invoker>::type>
+template <typename Invoker> inline std::shared_ptr<typename urltree_node<Invoker>::type>
 urltree_node<Invoker>::get(range<char const*> const &path) {
 	if (wildcard_token == path) {
 		if (!wildcard_node_) {
@@ -192,7 +192,7 @@ urltree_node<Invoker>::get(range<char const*> const &path) {
 }
 
 template <typename Invoker> inline void
-urltree_node<Invoker>::invoke(boost::shared_ptr<typename urltree_node<Invoker>::context_type> const &ctx) {
+urltree_node<Invoker>::invoke(std::shared_ptr<typename urltree_node<Invoker>::context_type> const &ctx) {
 	descriptor_.invoke(ctx);
 }
 

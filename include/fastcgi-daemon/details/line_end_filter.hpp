@@ -20,7 +20,7 @@
 
 #include <cassert>
 #include <iterator>
-#include <boost/type_traits.hpp>
+#include <type_traits>
 
 #include "fastcgi-daemon/config.hpp"
 #include "fastcgi-daemon/details/range.hpp"
@@ -31,14 +31,14 @@
 namespace fcgid { namespace details {
 
 template <typename Iter>
-class line_end_filter : public iterator<line_end_filter<Iter>, typename boost::add_const<typename std::iterator_traits<Iter>::value_type>::type, std::bidirectional_iterator_tag> {
+class line_end_filter : public iterator<line_end_filter<Iter>, typename std::add_const<typename std::iterator_traits<Iter>::value_type>::type, std::bidirectional_iterator_tag> {
 
 public:
 	line_end_filter();
 	line_end_filter(Iter begin, Iter end);
 
 	typedef line_end_filter<Iter> type;
-	typedef typename boost::add_const<typename std::iterator_traits<Iter>::value_type>::type value_type;
+	typedef typename std::add_const<typename std::iterator_traits<Iter>::value_type>::type value_type;
 	typedef iterator<line_end_filter<Iter>, value_type, std::forward_iterator_tag> base_type;
 	typedef typename base_type::reference reference;
 

@@ -35,9 +35,9 @@ dynamic_loader::dynamic_loader()
 dynamic_loader::~dynamic_loader() {
 }
 
-boost::shared_ptr<dynamic_loader>
+std::shared_ptr<dynamic_loader>
 create_loader() {
-	return boost::shared_ptr<dynamic_loader>(new dynamic_loader_impl());
+	return std::shared_ptr<dynamic_loader>(new dynamic_loader_impl());
 }
 
 dynamic_loader_impl::dynamic_loader_impl()

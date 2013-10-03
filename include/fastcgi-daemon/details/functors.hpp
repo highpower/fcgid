@@ -20,7 +20,7 @@
 
 #include <algorithm>
 #include <functional>
-#include <boost/type_traits.hpp>
+#include <type_traits>
 
 #include "fastcgi-daemon/config.hpp"
 
@@ -162,12 +162,12 @@ is_equal<Char>::operator () (Char value) const {
 
 template <typename Char> inline bool
 is_space<Char>::check(Char value) {
-	return char_traits<typename boost::remove_cv<Char>::type>::is_space(value);
+	return char_traits<typename std::remove_cv<Char>::type>::is_space(value);
 }
 
 template <typename Char> inline bool
 is_numeric<Char>::check(Char value) {
-	return char_traits<typename boost::remove_cv<Char>::type>::is_numeric(value);
+	return char_traits<typename std::remove_cv<Char>::type>::is_numeric(value);
 }
 
 template <typename Char> inline bool

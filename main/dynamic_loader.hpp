@@ -18,7 +18,7 @@
 #ifndef FASTCGI_DAEMON_MAIN_DYNAMIC_LOADER_HPP_INCLUDED
 #define FASTCGI_DAEMON_MAIN_DYNAMIC_LOADER_HPP_INCLUDED
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #include "fastcgi-daemon/config.hpp"
 
@@ -36,7 +36,7 @@ private:
 	dynamic_loader& operator = (dynamic_loader const &);
 };
 
-boost::shared_ptr<dynamic_loader> create_loader();
+std::shared_ptr<dynamic_loader> create_loader();
 
 }} // namespaces
 

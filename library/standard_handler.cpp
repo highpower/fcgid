@@ -34,13 +34,13 @@ standard_handler::swap(standard_handler &other) throw () {
 	swap(handler_, other.handler_);
 }
 
-standard_handler::standard_handler(boost::shared_ptr<request_handler> const &handler, http_method_mask const &m) :
+standard_handler::standard_handler(std::shared_ptr<request_handler> const &handler, http_method_mask const &m) :
 	mask_(m), handler_(handler)
 {
 }
 
 void
-standard_handler::handle(boost::shared_ptr<standard_handler::context_type> ctx, logger &log) const {
+standard_handler::handle(std::shared_ptr<standard_handler::context_type> ctx, logger &log) const {
 	handler_->handle_request(ctx->request(), ctx->response(), log);
 }
 

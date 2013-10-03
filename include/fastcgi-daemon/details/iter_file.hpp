@@ -21,7 +21,6 @@
 #include <cassert>
 #include <fstream>
 #include <iomanip>
-#include <boost/static_assert.hpp>
 
 #include "fastcgi-daemon/file.hpp"
 #include "fastcgi-daemon/config.hpp"
@@ -69,7 +68,7 @@ iter_file<Iter, A>::~iter_file() {
 
 template <typename Iter, typename A> inline std::streamsize
 iter_file<Iter, A>::size() const {
-	BOOST_STATIC_ASSERT(sizeof(std::streamsize) >= sizeof(typename range<Iter>::size_type));
+	static_assert(sizeof(std::streamsize) >= sizeof(typename range<Iter>::size_type), "range size type is bigger than streamsize");
 	return static_cast<std::streamsize>(content_.size());
 }
 

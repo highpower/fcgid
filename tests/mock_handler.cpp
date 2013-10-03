@@ -54,7 +54,7 @@ mock_handler::mock_handler(std::string const &name) :
 }
 
 void
-mock_handler::handle(boost::shared_ptr<mock_context> const &ctx, logger &log) const {
+mock_handler::handle(std::shared_ptr<mock_context> const &ctx, logger &log) const {
 	(void) log;
 	mock_response &resp = ctx->response();
 	resp.content(name_);

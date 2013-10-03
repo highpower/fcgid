@@ -19,11 +19,11 @@
 #define FASTCGI_DAEMON_DETAILS_GENERIC_REQUEST_HPP_INCLUDED
 
 #include <map>
+#include <memory>
 #include <string>
 #include <fstream>
 #include <functional>
-#include <boost/shared_ptr.hpp>
-#include <boost/type_traits.hpp>
+#include <type_traits>
 
 #include "fastcgi-daemon/file.hpp"
 #include "fastcgi-daemon/config.hpp"
@@ -59,7 +59,7 @@ public:
 	typedef std::multimap<string_type, string_type, std::less<string_type>, param_allocator_type> string_multimap_type;
 	
 	typedef file_impl<allocator_type> file_type;
-	typedef boost::shared_ptr<file_type> file_ptr_type;
+	typedef std::shared_ptr<file_type> file_ptr_type;
 
 	typedef std::pair<string_type const, file_ptr_type> file_param_type;
 	typedef typename Alloc::template rebind<file_param_type>::other file_param_allocator_type;
@@ -141,7 +141,7 @@ private:
 template <typename String, typename Sequence> inline String
 make_var_name_impl(Sequence const &sequence, String &result) {
 	
-	typedef typename boost::remove_cv<typename Sequence::value_type>::type char_type;
+	typedef typename std::remove_cv<typename Sequence::value_type>::type char_type;
 	if (sequence.empty()) {
 		throw runtime_error("%s", "sequence can not be empty");
 	}

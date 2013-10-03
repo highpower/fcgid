@@ -19,7 +19,7 @@
 #define FASTCGI_STATISTICS_CONFIG_HPP_INCLUDED
 
 #include <cstddef>
-#include <boost/ref.hpp>
+#include <functional>
 
 #include "fastcgi-daemon/config.hpp"
 #include "fastcgi-daemon/forward.hpp"
@@ -46,7 +46,7 @@ public:
 	std::size_t requests_in_queue(queue_name_type queue) const;
 
 private:
-	boost::reference_wrapper<impl_type const> impl_;
+	std::reference_wrapper<impl_type const> impl_;
 };
 
 inline FASTCGI_DAEMON_API void

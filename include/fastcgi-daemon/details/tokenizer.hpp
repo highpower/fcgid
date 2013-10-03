@@ -20,7 +20,6 @@
 
 #include <iterator>
 #include <functional>
-#include <boost/type_traits.hpp>
 
 #include "fastcgi-daemon/config.hpp"
 #include "fastcgi-daemon/details/range.hpp"

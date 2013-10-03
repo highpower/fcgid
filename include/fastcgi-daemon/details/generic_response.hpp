@@ -20,9 +20,10 @@
 
 #include <set>
 #include <map>
+#include <memory>
 #include <string>
 #include <sstream>
-#include <boost/shared_ptr.hpp>
+#include <type_traits>
 
 #include "fastcgi-daemon/config.hpp"
 #include "fastcgi-daemon/http_date.hpp"
@@ -61,7 +62,7 @@ public:
 	void expire_time(http_date const &exp);
 	void expire_time(string_type const &exp);
 	
-	void set_cookie(boost::shared_ptr<cookie_type> const &cookie);
+	void set_cookie(std::shared_ptr<cookie_type> const &cookie);
 	std::size_t write(char const *buffer, std::size_t size);
 
 	void clear();
@@ -77,7 +78,7 @@ private:
 	using generic_response_base::set_cookie_token;
 
 	typedef std::pair<string_type const, string_type> header_type;
-	typedef boost::shared_ptr<typename cookie_impl<A>::type> cookie_ptr_type;
+	typedef std::shared_ptr<typename cookie_impl<A>::type> cookie_ptr_type;
 	typedef typename A::template rebind<header_type>::other header_allocator_type;
 	typedef std::map<string_type, string_type, std::less<string_type>, header_allocator_type> header_map_type;
 
@@ -157,7 +158,7 @@ generic_response<IO, A>::expire_time(typename generic_response<IO, A>::string_ty
 }
 
 template <typename IO, typename A> inline void
-generic_response<IO, A>::set_cookie(boost::shared_ptr<typename generic_response<IO, A>::cookie_type> const &cookie) {
+generic_response<IO, A>::set_cookie(std::shared_ptr<typename generic_response<IO, A>::cookie_type> const &cookie) {
 	cookies_.insert(cookie);
 	headers_sent_ = false;
 }
@@ -241,7 +242,7 @@ sanitize_header_name(String const &str) {
 	String result(str.get_allocator());
 	result.reserve(trimmed.size());
 	
-	typedef typename boost::remove_cv<typename String::value_type>::type char_type;
+	typedef typename std::remove_cv<typename String::value_type>::type char_type;
 	for (typename range_type::const_iterator i = trimmed.begin(), end = trimmed.end(); i != end; ++i) {
 		if ((*i) == static_cast<char_type>('-')) {
 			need_upper = true;

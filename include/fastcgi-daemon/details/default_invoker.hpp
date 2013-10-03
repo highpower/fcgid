@@ -19,9 +19,9 @@
 #ifndef FASTCGI_DAEMON_DETAILS_DEFAULT_INVOKER_HPP_INCLUDED
 #define FASTCGI_DAEMON_DETAILS_DEFAULT_INVOKER_HPP_INCLUDED
 
+#include <memory>
 #include <cassert>
 #include <exception>
-#include <boost/shared_ptr.hpp>
 
 #include "fastcgi-daemon/config.hpp"
 #include "fastcgi-daemon/logger.hpp"
@@ -46,20 +46,20 @@ public:
 	typedef default_invoker_descriptor<Handler> descriptor_type;
 	
 	logger& log();
-	void add(boost::shared_ptr<logger> const &log);
+	void add(std::shared_ptr<logger> const &log);
 	
 	descriptor_type descriptor(Handler const &handler);
-	void handle(handler_type const &handler, boost::shared_ptr<context_type> const &ctx) throw ();
+	void handle(handler_type const &handler, std::shared_ptr<context_type> const &ctx) throw ();
 	
-	void info(char const *issue, boost::shared_ptr<context_type> const &ctx);
-	void error(char const *issue, boost::shared_ptr<context_type> const &ctx, std::exception const &e);
+	void info(char const *issue, std::shared_ptr<context_type> const &ctx);
+	void error(char const *issue, std::shared_ptr<context_type> const &ctx, std::exception const &e);
 
 private:
 	default_invoker(default_invoker const &);
 	default_invoker& operator = (default_invoker const &);
 	
 private:
-	boost::shared_ptr<logger> log_;
+	std::shared_ptr<logger> log_;
 };
 
 template <typename Handler>
@@ -72,7 +72,7 @@ public:
 	default_invoker_descriptor();
 	default_invoker_descriptor(handler_type const &handler, default_invoker<Handler> *invoker);
 	
-	void invoke(boost::shared_ptr<context_type> const &ctx) const;
+	void invoke(std::shared_ptr<context_type> const &ctx) const;
 	
 private:
 	handler_type handler_;
@@ -95,7 +95,7 @@ default_invoker<Handler>::log() {
 }
 
 template <typename Handler> inline void
-default_invoker<Handler>::add(boost::shared_ptr<logger> const &log) {
+default_invoker<Handler>::add(std::shared_ptr<logger> const &log) {
 	log_ = log;
 }
 
@@ -105,7 +105,7 @@ default_invoker<Handler>::descriptor(typename default_invoker<Handler>::handler_
 }
 
 template <typename Handler> inline void
-default_invoker<Handler>::handle(typename default_invoker<Handler>::handler_type const &handler, boost::shared_ptr<typename default_invoker<Handler>::context_type> const &ctx) throw () {
+default_invoker<Handler>::handle(typename default_invoker<Handler>::handler_type const &handler, std::shared_ptr<typename default_invoker<Handler>::context_type> const &ctx) throw () {
 	try {
 		info("request started", ctx);
 		handler.handle(ctx, log());
@@ -120,7 +120,7 @@ default_invoker<Handler>::handle(typename default_invoker<Handler>::handler_type
 }
 
 template <typename Handler> inline void
-default_invoker<Handler>::info(char const *issue, boost::shared_ptr<typename default_invoker<Handler>::context_type> const &ctx) {
+default_invoker<Handler>::info(char const *issue, std::shared_ptr<typename default_invoker<Handler>::context_type> const &ctx) {
 	typedef typename context_type::request_type request_type;
 	request_type const &req = ctx->request();
 	typename request_type::string_type const &pi = req.path_info();
@@ -128,7 +128,7 @@ default_invoker<Handler>::info(char const *issue, boost::shared_ptr<typename def
 }
 
 template <typename Handler> inline void
-default_invoker<Handler>::error(char const *issue, boost::shared_ptr<typename default_invoker<Handler>::context_type> const &ctx, std::exception const &e) {
+default_invoker<Handler>::error(char const *issue, std::shared_ptr<typename default_invoker<Handler>::context_type> const &ctx, std::exception const &e) {
 	typedef typename context_type::request_type request_type;
 	request_type const &req = ctx->request();
 	typename request_type::string_type const &pi = req.path_info();
@@ -148,7 +148,7 @@ default_invoker_descriptor<Handler>::default_invoker_descriptor(typename default
 }
 
 template <typename Handler> inline void
-default_invoker_descriptor<Handler>::invoke(boost::shared_ptr<typename default_invoker_descriptor<Handler>::context_type> const &ctx) const {
+default_invoker_descriptor<Handler>::invoke(std::shared_ptr<typename default_invoker_descriptor<Handler>::context_type> const &ctx) const {
 	if (!invoker_ || !handler_) {
 		throw http_error(http_status::not_found);
 	}

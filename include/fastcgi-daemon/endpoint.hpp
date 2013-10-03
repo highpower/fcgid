@@ -18,8 +18,8 @@
 #ifndef FASTCGI_DAEMON_ENDPOINT_HPP_INCLUDED
 #define FASTCGI_DAEMON_ENDPOINT_HPP_INCLUDED
 
+#include <memory>
 #include <string>
-#include <boost/shared_ptr.hpp>
 
 #include "fastcgi-daemon/config.hpp"
 #include "fastcgi-daemon/forward.hpp"
@@ -44,13 +44,13 @@ public:
 	static endpoint create_netword_socket(char const *addr, unsigned short port, unsigned short backlog);
 	
 	typedef details::endpoint_impl impl_type;
-	boost::shared_ptr<impl_type> const& impl() const;
+	std::shared_ptr<impl_type> const& impl() const;
 
 private:
-	explicit endpoint(boost::shared_ptr<impl_type> const &impl);
+	explicit endpoint(std::shared_ptr<impl_type> const &impl);
 
 private:
-	boost::shared_ptr<impl_type> impl_;
+	std::shared_ptr<impl_type> impl_;
 };
 
 inline FASTCGI_DAEMON_API void

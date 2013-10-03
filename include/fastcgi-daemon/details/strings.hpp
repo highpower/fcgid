@@ -19,7 +19,7 @@
 #define FASTCGI_DAEMON_DETAILS_STRINGS_HPP_INCLUDED
 
 #include <utility>
-#include <boost/type_traits.hpp>
+#include <type_traits>
 
 #include "fastcgi-daemon/config.hpp"
 #include "fastcgi-daemon/details/range.hpp"
@@ -165,7 +165,7 @@ split_first_of_once(Sequence const &seq, typename Sequence::value_type const *ch
 template <typename Sequence, typename Prefix> inline bool
 starts_with(Sequence const &seq, Prefix const &prefix, typename Prefix::value_type const *sfinae = 0) {
 	(void) sfinae;
-	typedef typename boost::common_type<typename Sequence::size_type, typename Prefix::size_type>::type size_type;
+	typedef typename std::common_type<typename Sequence::size_type, typename Prefix::size_type>::type size_type;
 	if (static_cast<size_type>(prefix.size()) <= static_cast<size_type>(seq.size())) {
 		return std::equal(prefix.begin(), prefix.end(), seq.begin());
 	}
@@ -185,7 +185,7 @@ starts_with(char const *string, Prefix const &prefix) {
 template <typename Sequence, typename Suffix> inline bool
 ends_with(Sequence const &seq, Suffix const &suffix, typename Suffix::value_type const *sfinae = 0) {
 	(void) sfinae;
-	typedef typename boost::common_type<typename Sequence::size_type, typename Suffix::size_type>::type size_type;
+	typedef typename std::common_type<typename Sequence::size_type, typename Suffix::size_type>::type size_type;
 	if (static_cast<size_type>(suffix.size()) <= static_cast<size_type>(seq.size())) {
 		typename Sequence::const_iterator i = seq.begin();
 		std::advance(i, seq.size() - suffix.size());

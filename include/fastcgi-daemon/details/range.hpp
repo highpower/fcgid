@@ -23,7 +23,7 @@
 #include <iostream>
 #include <algorithm>
 #include <functional>
-#include <boost/type_traits.hpp>
+#include <type_traits>
 
 #include "fastcgi-daemon/config.hpp"
 
@@ -49,7 +49,7 @@ public:
 	typedef typename std::iterator_traits<Iter>::reference const const_reference;
 
 	typedef typename std::iterator_traits<Iter>::difference_type difference_type;
-	typedef typename boost::make_unsigned<typename std::iterator_traits<Iter>::difference_type>::type size_type;
+	typedef typename std::make_unsigned<typename std::iterator_traits<Iter>::difference_type>::type size_type;
 
 	iterator end();
 	const_iterator end() const;

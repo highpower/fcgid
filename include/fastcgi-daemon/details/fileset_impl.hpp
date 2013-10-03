@@ -18,7 +18,7 @@
 #ifndef FASTCGI_DAEMON_DETAILS_FILESET_IMPL_HPP_INCLUDED
 #define FASTCGI_DAEMON_DETAILS_FILESET_IMPL_HPP_INCLUDED
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #include "fastcgi-daemon/config.hpp"
 #include "fastcgi-daemon/fileset.hpp"
@@ -71,9 +71,9 @@ fileset_impl<Iter>::value() const {
 	return file(i_->second);
 }
 
-template <typename Iter> inline boost::shared_ptr<fileset>
+template <typename Iter> inline std::shared_ptr<fileset>
 make_fileset(Iter begin, Iter end) {
-	return boost::shared_ptr<fileset>(new fileset_impl<Iter>(begin, end));
+	return std::shared_ptr<fileset>(new fileset_impl<Iter>(begin, end));
 }
 
 }} // namespaces

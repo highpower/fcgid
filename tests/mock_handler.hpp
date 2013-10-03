@@ -18,8 +18,8 @@
 #ifndef FASTCGI_DAEMON_TESTS_MOCK_HANDLER_HPP_INCLUDED
 #define FASTCGI_DAEMON_TESTS_MOCK_HANDLER_HPP_INCLUDED
 
+#include <memory>
 #include <string>
-#include <boost/shared_ptr.hpp>
 
 #include "fastcgi-daemon/config.hpp"
 #include "fastcgi-daemon/forward.hpp"
@@ -76,7 +76,7 @@ class mock_handler {
 public:
 	mock_handler();
 	mock_handler(std::string const &name);
-	void handle(boost::shared_ptr<mock_context> const &ctx, logger &log) const;
+	void handle(std::shared_ptr<mock_context> const &ctx, logger &log) const;
 	
 	typedef mock_context context_type;
 	

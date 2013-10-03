@@ -18,9 +18,9 @@
 #ifndef FASTCGI_DAEMON_FILE_HPP_INCLUDED
 #define FASTCGI_DAEMON_FILE_HPP_INCLUDED
 
-#include <string>
 #include <iosfwd>
-#include <boost/shared_ptr.hpp>
+#include <memory>
+#include <string>
 
 #include "fastcgi-daemon/config.hpp"
 #include "fastcgi-daemon/forward.hpp"
@@ -33,7 +33,7 @@ public:
 	typedef details::file_impl<stdalloc> impl_type;
 
 	file();
-	explicit file(boost::shared_ptr<impl_type> const &impl);
+	explicit file(std::shared_ptr<impl_type> const &impl);
 	virtual ~file();	
 	
 	file(file const &other);
@@ -51,7 +51,7 @@ public:
 	operator std::istream& ();
 
 private:
-	boost::shared_ptr<impl_type> impl_;
+	std::shared_ptr<impl_type> impl_;
 };
 
 inline FASTCGI_DAEMON_API

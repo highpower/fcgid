@@ -18,9 +18,9 @@
 #ifndef FASTCGI_DAEMON_REQUEST_HPP_INCLUDED
 #define FASTCGI_DAEMON_REQUEST_HPP_INCLUDED
 
+#include <memory>
 #include <string>
 #include <utility>
-#include <boost/shared_ptr.hpp>
 
 #include "fastcgi-daemon/file.hpp"
 #include "fastcgi-daemon/config.hpp"
@@ -40,19 +40,19 @@ public:
 	virtual http_method method() const = 0;
 	virtual std::string const& path_info() const = 0;
 
-	virtual boost::shared_ptr<paramset> vars() const = 0;
+	virtual std::shared_ptr<paramset> vars() const = 0;
 	virtual bool has_var(std::string const &name) const = 0;
 	virtual std::string const& var(std::string const &name) const = 0;
 	
-	virtual boost::shared_ptr<paramset> cookies() const = 0;
+	virtual std::shared_ptr<paramset> cookies() const = 0;
 	virtual bool has_cookie(std::string const &name) const = 0;
 	virtual std::string const& cookie(std::string const &name) const = 0;
 
-	virtual boost::shared_ptr<paramset> args() const = 0;
+	virtual std::shared_ptr<paramset> args() const = 0;
 	virtual bool has_arg(std::string const &name) const = 0;
 	virtual std::string const& arg(std::string const &name) const = 0;
 
-	virtual boost::shared_ptr<fileset> files() const = 0;
+	virtual std::shared_ptr<fileset> files() const = 0;
 	virtual bool has_file(std::string const &name) const = 0;
 	virtual file get_file(std::string const &name) const = 0;
 	

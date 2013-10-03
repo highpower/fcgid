@@ -18,7 +18,7 @@
 #ifndef FASTCGI_DAEMON_DETAILS_STANDARD_HANDLER_HPP_INCLUDED
 #define FASTCGI_DAEMON_DETAILS_STANDARD_HANDLER_HPP_INCLUDED
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #include "fastcgi-daemon/config.hpp"
 #include "fastcgi-daemon/forward.hpp"
@@ -45,15 +45,15 @@ public:
 	standard_handler& operator = (standard_handler const &other);
 	void swap(standard_handler &other) throw ();
 	
-	standard_handler(boost::shared_ptr<request_handler> const &handler, http_method_mask const &m);
-	void handle(boost::shared_ptr<context_type> ctx, logger &log) const;
+	standard_handler(std::shared_ptr<request_handler> const &handler, http_method_mask const &m);
+	void handle(std::shared_ptr<context_type> ctx, logger &log) const;
 
 	class bool_convertible;
 	operator bool_convertible const* () const;
 
 private:
 	http_method_mask mask_;
-	boost::shared_ptr<request_handler> handler_;
+	std::shared_ptr<request_handler> handler_;
 };
 
 inline void

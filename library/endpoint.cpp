@@ -22,7 +22,7 @@ endpoint::endpoint(endpoint const &other) :
 {
 }
 
-endpoint::endpoint(boost::shared_ptr<impl_type> const &impl) :
+endpoint::endpoint(std::shared_ptr<impl_type> const &impl) :
 	impl_(impl)
 {
 }
@@ -55,7 +55,7 @@ endpoint::operator != (endpoint const &other) const {
 
 endpoint
 endpoint::create_unix_socket(char const *path, unsigned short backlog) {
-	boost::shared_ptr<impl_type> ep(new impl_type(path, backlog));
+	std::shared_ptr<impl_type> ep(new impl_type(path, backlog));
 	return endpoint(ep);
 }
 
@@ -64,11 +64,11 @@ endpoint::create_netword_socket(char const *addr, unsigned short port, unsigned 
 	std::stringstream stream;
 	stream << addr << ':' << port;
 	std::string result = stream.str();
-	boost::shared_ptr<impl_type> ep(new impl_type(result.c_str(), backlog));
+	std::shared_ptr<impl_type> ep(new impl_type(result.c_str(), backlog));
 	return endpoint(ep);
 }
 
-boost::shared_ptr<endpoint::impl_type> const&
+std::shared_ptr<endpoint::impl_type> const&
 endpoint::impl() const {
 	return impl_;
 }

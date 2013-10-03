@@ -27,7 +27,7 @@ fastcgi_request_traits::destroy(FCGX_Request *req) {
 fastcgi::fastcgi(endpoint const &desc)
 {
 	boost::call_once(&fastcgi::init_fastcgi_engine, fastcgi_init_flag);
-	boost::shared_ptr<endpoint_impl> const &impl = desc.impl();
+	std::shared_ptr<endpoint_impl> const &impl = desc.impl();
 	
 	req_.reset(new FCGX_Request());
 	memset(req_.get(), 0, sizeof(FCGX_Request));

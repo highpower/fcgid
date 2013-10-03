@@ -18,7 +18,7 @@
 #ifndef FASTCGI_DAEMON_SERVER_HPP_INCLUDED
 #define FASTCGI_DAEMON_SERVER_HPP_INCLUDED
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #include "fastcgi-daemon/config.hpp"
 #include "fastcgi-daemon/forward.hpp"
@@ -42,14 +42,14 @@ public:
 	void listen(endpoint const &ep);
 	void create_queue(queue_name_type name, thread_count_type nthreads);
 	
-	void add(boost::shared_ptr<logger> const &log);
-	void add(url_type url, queue_name_type queue, boost::shared_ptr<request_handler> const &handler, http_method_mask const &mask);
+	void add(std::shared_ptr<logger> const &log);
+	void add(url_type url, queue_name_type queue, std::shared_ptr<request_handler> const &handler, http_method_mask const &mask);
 
 	statistics stat() const;
 
 private:
 	typedef details::server_impl impl_type;
-	boost::shared_ptr<impl_type> impl_;
+	std::shared_ptr<impl_type> impl_;
 };
 
 } // namespace

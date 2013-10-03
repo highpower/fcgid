@@ -18,7 +18,7 @@
 #ifndef FASTCGI_DAEMON_DETAILS_PARAMSET_IMPL_HPP_INCLUDED
 #define FASTCGI_DAEMON_DETAILS_PARAMSET_IMPL_HPP_INCLUDED
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #include "fastcgi-daemon/config.hpp"
 #include "fastcgi-daemon/paramset.hpp"
@@ -72,9 +72,9 @@ paramset_impl<Iter>::value() const {
 	return i_->second;
 }
 
-template <typename Iter> boost::shared_ptr<paramset>
+template <typename Iter> std::shared_ptr<paramset>
 make_paramset(Iter begin, Iter end) {
-	return boost::shared_ptr<paramset>(new paramset_impl<Iter>(begin, end));
+	return std::shared_ptr<paramset>(new paramset_impl<Iter>(begin, end));
 }
 
 }} // namespaces

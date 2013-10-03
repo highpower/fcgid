@@ -18,9 +18,9 @@
 #ifndef FASTCGI_DAEMON_DETAILS_REQUEST_PARSER_HPP_INCLUDED
 #define FASTCGI_DAEMON_DETAILS_REQUEST_PARSER_HPP_INCLUDED
 
+#include <memory>
 #include <string>
 #include <utility>
-#include <boost/shared_ptr.hpp>
 
 #include "fastcgi-daemon/config.hpp"
 #include "fastcgi-daemon/http_error.hpp"
@@ -285,7 +285,7 @@ request_parser<Request>::process_part(range<typename request_parser<Request>::bu
 		
 		range_type const &content_type_range = parser.content_type();
 		string_type content_type(content_type_range.begin(), content_type_range.end(), pattern.get_allocator());
-		boost::shared_ptr<file_type> f(new iter_file<buffer_iterator_type, allocator_type>(file_name, content_type, content));
+		std::shared_ptr<file_type> f(new iter_file<buffer_iterator_type, allocator_type>(file_name, content_type, content));
 		request_.add_file(name, f);
 	}
 	else {
