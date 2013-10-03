@@ -62,8 +62,8 @@ public:
 	virtual void store(char const *file) = 0;
 	
 private:
-	request(request const &);
-	request& operator = (request const &);
+	request(request const &) = delete;
+	request& operator = (request const &) = delete;
 };
 
 } // namespace

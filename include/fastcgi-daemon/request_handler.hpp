@@ -29,6 +29,10 @@ public:
 	request_handler();
 	virtual ~request_handler();
 	virtual void handle_request(request const &req, response &resp, logger &log) = 0;
+
+private:
+	request_handler(request_handler const &) = delete;
+	request_handler& operator = (request_handler const &) = delete;
 };
 
 } // namespace

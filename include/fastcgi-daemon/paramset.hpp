@@ -37,8 +37,8 @@ public:
 	virtual std::string const& value() const = 0;
 
 private:
-	paramset(paramset const &);
-	paramset& operator = (paramset const &);
+	paramset(paramset const &) = delete;
+	paramset& operator = (paramset const &) = delete;
 };
 
 } // namespaces

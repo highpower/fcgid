@@ -33,8 +33,8 @@ public:
 	virtual void error(char const *format, ...) = 0;
 
 private:
-	logger(logger const &);
-	logger& operator = (logger const &);
+	logger(logger const &) = delete;
+	logger& operator = (logger const &) = delete;
 };
 
 } // namespace

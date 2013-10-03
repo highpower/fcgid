@@ -36,8 +36,8 @@ public:
 	virtual file value() const = 0;
 
 private:
-	fileset(fileset const &);
-	fileset& operator = (fileset const &);
+	fileset(fileset const &) = delete;
+	fileset& operator = (fileset const &) = delete;
 };
 
 } // namespace

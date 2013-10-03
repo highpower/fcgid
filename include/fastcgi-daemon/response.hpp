@@ -42,8 +42,8 @@ public:
 	virtual std::size_t write(char const *buffer, std::size_t size) = 0;
 
 private:
-	response(response const &);
-	response& operator = (response const &);
+	response(response const &) = delete;
+	response& operator = (response const &) = delete;
 };
 
 } // namespace
